@@ -7,4 +7,13 @@
 ### 使用方法
 项目里面直接放的该功能的文件，将这个文件夹复制到小程序项目中，在app.json中启动该页面即可看到效果
 
+
+### 注意：这里面的图片在你们的项目中可能会无法使用，在测试的话 可以用自己本地或者你们项目服务器下的图片地址
+
 ### 显示效果
+#### 裁剪之前的效果
+![](https://github.com/IFmiss/wx-cropper/blob/master/2.jpg) 
+
+#### 裁剪之后的效果
+![](https://github.com/IFmiss/wx-cropper/blob/master/1.jpg) 
+
