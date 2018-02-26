@@ -158,30 +158,31 @@ Page({
         // 将图片写入画布
         const ctx = wx.createCanvasContext('myCanvas')
         ctx.drawImage(res.tempFilePath)
-        ctx.draw()
-        // 获取画布要裁剪的位置和宽度   均为百分比 * 画布中图片的宽度    保证了在微信小程序中裁剪的图片模糊  位置不对的问题
-        var canvasW = _this.data.cutW / _this.data.cropperW * _this.data.imageW / pixelRatio
-        var canvasH = _this.data.cutH / _this.data.cropperH * _this.data.imageH / pixelRatio
-        var canvasL = _this.data.cutL / _this.data.cropperW * _this.data.imageW / pixelRatio
-        var canvasT = _this.data.cutT / _this.data.cropperH * _this.data.imageH / pixelRatio
-        console.log(`canvasW:${canvasW} --- canvasH: ${canvasH} --- canvasL: ${canvasL} --- canvasT: ${canvasT} -------- _this.data.imageW: ${_this.data.imageW}  ------- _this.data.imageH: ${_this.data.imageH}`)
-        wx.canvasToTempFilePath({
-          x: canvasL,
-          y: canvasT,
-          width: canvasW,
-          height: canvasH,
-          destWidth: canvasW,
-          destHeight: canvasH,
-          canvasId: 'myCanvas',
-          success: function (res) {
-            wx.hideLoading()
-            // 成功获得地址的地方
-            console.log(res.tempFilePath)
-            wx.previewImage({
-              current: '', // 当前显示图片的http链接
-              urls: [res.tempFilePath] // 需要预览的图片http链接列表
-            })
-          }
+        ctx.draw(true, () => {
+          // 获取画布要裁剪的位置和宽度   均为百分比 * 画布中图片的宽度    保证了在微信小程序中裁剪的图片模糊  位置不对的问题
+          var canvasW = (_this.data.cutW / _this.data.cropperW) * (_this.data.imageW / pixelRatio)
+          var canvasH = (_this.data.cutH / _this.data.cropperH) * (_this.data.imageH / pixelRatio)
+          var canvasL = (_this.data.cutL / _this.data.cropperW) * (_this.data.imageW / pixelRatio)
+          var canvasT = (_this.data.cutT / _this.data.cropperH) * (_this.data.imageH / pixelRatio)
+          console.log(`canvasW:${canvasW} --- canvasH: ${canvasH} --- canvasL: ${canvasL} --- canvasT: ${canvasT} -------- _this.data.imageW: ${_this.data.imageW}  ------- _this.data.imageH: ${_this.data.imageH} ---- pixelRatio ${pixelRatio}`)
+          wx.canvasToTempFilePath({
+            x: canvasL,
+            y: canvasT,
+            width: canvasW,
+            height: canvasH,
+            destWidth: canvasW,
+            destHeight: canvasH,
+            canvasId: 'myCanvas',
+            success: function (res) {
+              wx.hideLoading()
+              // 成功获得地址的地方
+              console.log(res.tempFilePath)
+              wx.previewImage({
+                current: '', // 当前显示图片的http链接
+                urls: [res.tempFilePath] // 需要预览的图片http链接列表
+              })
+            }
+          })
         })
       }
     })
