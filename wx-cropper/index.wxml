@@ -27,7 +27,9 @@
     </view>
     <!-- <view class="wx-cropper-drag-box"></view> -->
   </view>
-  <canvas canvas-id="myCanvas" style="position:absolute;border: 1px solid red; width:{{imageW}}rpx;height:{{imageH}}rpx;top:-9999px;left:-9999px;"></canvas>
-  <button type="primary" bindtap="getImageInfo" style="position:fixed;bottom:120rpx;width:90%;left:50%;transform:translate3d(-50%,0,0)"> 点击生成图片 </button>
+  <canvas canvas-id="myCanvas" style="position:absolute;border: 1px solid red; width:{{qualityWidth}}px;height:{{qualityWidth/innerAspectRadio}}px;top:-9999px;left:-9999px;"></canvas>
+  <button type="primary" bindtap="getImageInfo" style="position:fixed;bottom:120rpx;width:30%;left:20%;transform:translate3d(-50%,0,0)"> 点击生成图片 </button>
+
+  <button type="primary" bindtap="getImage" style="position:fixed;bottom:120rpx;width:30%;left:60%;transform:translate3d(-50%,0,0)"> 选择图片 </button>
   <image src="{{returnImage}}"></image>
 </view>

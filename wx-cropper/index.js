@@ -17,7 +17,8 @@ var initDragCutW = 0
 var initDragCutL = 0
 var initDragCutH = 0
 var initDragCutT = 0
-
+var qualityWidth = 1080
+var innerAspectRadio = 1
 // 移动时 手势位移与 实际元素位移的比
 var dragScaleP = 2
 
@@ -51,6 +52,8 @@ Page({
     cutH: 0,
     cutL: 0,
     cutT: 0,
+    qualityWidth: qualityWidth,
+    innerAspectRadio: innerAspectRadio
   },
 
   /**
@@ -63,16 +66,36 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
+
+    // this.loadImage();
+
+  },
+  getImage: function () {
+
     var _this = this
-    
+    wx.chooseImage({
+      success: function (res) {
+        _this.setData({
+          imageSrc: res.tempFilePaths[0],
+        })
+        _this.loadImage();
+      },
+    })
+    // wx.showToast({
+    //   title: 'sss',
+    // })
+  },
+  loadImage: function () {
+    var _this = this
     wx.showLoading({
       title: '图片加载中...',
     })
 
     wx.getImageInfo({
       src: _this.data.imageSrc,
+      // src:src,
       success: function success(res) {
-        var innerAspectRadio = res.width / res.height;
+        innerAspectRadio = res.width / res.height;
         // 根据图片的宽高显示不同的效果   保证图片可以正常显示
         if (innerAspectRadio >= 1) {
           _this.setData({
@@ -90,7 +113,9 @@ Page({
             scaleP: res.width * pixelRatio / windowWRPX,
             // 图片原始宽度 rpx
             imageW: res.width * pixelRatio,
-            imageH: res.height * pixelRatio
+            imageH: res.height * pixelRatio,
+
+            innerAspectRadio: innerAspectRadio
           })
         } else {
           _this.setData({
@@ -108,7 +133,9 @@ Page({
             scaleP: res.width * pixelRatio / windowWRPX,
             // 图片原始宽度 rpx
             imageW: res.width * pixelRatio,
-            imageH: res.height * pixelRatio
+            imageH: res.height * pixelRatio,
+
+            innerAspectRadio: innerAspectRadio
           })
         }
         _this.setData({
@@ -118,15 +145,14 @@ Page({
       }
     })
   },
-
   // 拖动时候触发的touchStart事件
-  contentStartMove (e) {
+  contentStartMove(e) {
     pageX = e.touches[0].pageX
     pageY = e.touches[0].pageY
   },
 
   // 拖动时候触发的touchMove事件
-  contentMoveing (e) {
+  contentMoveing(e) {
     var _this = this
     // _this.data.cutL + (e.touches[0].pageX - pageX)
     // console.log(e.touches[0].pageX)
@@ -147,44 +173,42 @@ Page({
   },
 
   // 获取图片
-  getImageInfo () {
+  getImageInfo() {
+
     var _this = this
+
     wx.showLoading({
       title: '图片生成中...',
     })
-    wx.downloadFile({
-      url: _this.data.imageSrc, //仅为示例，并非真实的资源
-      success: function (res) {
-        // 将图片写入画布
-        const ctx = wx.createCanvasContext('myCanvas')
-        ctx.drawImage(res.tempFilePath)
-        ctx.draw(true, () => {
-          // 获取画布要裁剪的位置和宽度   均为百分比 * 画布中图片的宽度    保证了在微信小程序中裁剪的图片模糊  位置不对的问题
-          var canvasW = (_this.data.cutW / _this.data.cropperW) * (_this.data.imageW / pixelRatio)
-          var canvasH = (_this.data.cutH / _this.data.cropperH) * (_this.data.imageH / pixelRatio)
-          var canvasL = (_this.data.cutL / _this.data.cropperW) * (_this.data.imageW / pixelRatio)
-          var canvasT = (_this.data.cutT / _this.data.cropperH) * (_this.data.imageH / pixelRatio)
-          console.log(`canvasW:${canvasW} --- canvasH: ${canvasH} --- canvasL: ${canvasL} --- canvasT: ${canvasT} -------- _this.data.imageW: ${_this.data.imageW}  ------- _this.data.imageH: ${_this.data.imageH} ---- pixelRatio ${pixelRatio}`)
-          wx.canvasToTempFilePath({
-            x: canvasL,
-            y: canvasT,
-            width: canvasW,
-            height: canvasH,
-            destWidth: canvasW,
-            destHeight: canvasH,
-            canvasId: 'myCanvas',
-            success: function (res) {
-              wx.hideLoading()
-              // 成功获得地址的地方
-              console.log(res.tempFilePath)
-              wx.previewImage({
-                current: '', // 当前显示图片的http链接
-                urls: [res.tempFilePath] // 需要预览的图片http链接列表
-              })
-            }
+    // 将图片写入画布
+    const ctx = wx.createCanvasContext('myCanvas')
+    ctx.drawImage(_this.data.imageSrc, 0, 0, qualityWidth, qualityWidth / innerAspectRadio);
+    ctx.draw(true, () => {
+      // 获取画布要裁剪的位置和宽度   均为百分比 * 画布中图片的宽度    保证了在微信小程序中裁剪的图片模糊  位置不对的问题 canvasT = (_this.data.cutT / _this.data.cropperH) * (_this.data.imageH / pixelRatio)
+      var canvasW = (_this.data.cutW / _this.data.cropperW) * qualityWidth
+      var canvasH = (_this.data.cutH / _this.data.cropperH) * qualityWidth / innerAspectRadio
+      var canvasL = (_this.data.cutL / _this.data.cropperW) * qualityWidth
+      var canvasT = (_this.data.cutT / _this.data.cropperH) * qualityWidth / innerAspectRadio
+      console.log(`canvasW:${canvasW} --- canvasH: ${canvasH} --- canvasL: ${canvasL} --- canvasT: ${canvasT} -------- _this.data.imageW: ${_this.data.imageW}  ------- _this.data.imageH: ${_this.data.imageH} ---- pixelRatio ${pixelRatio}`)
+      wx.canvasToTempFilePath({
+        x: canvasL,
+        y: canvasT,
+        width: canvasW,
+        height: canvasH,
+        destWidth: canvasW,
+        destHeight: canvasH,
+        quality:0.5,
+        canvasId: 'myCanvas',
+        success: function (res) {
+          wx.hideLoading()
+          // 成功获得地址的地方
+          console.log(res.tempFilePath)
+          wx.previewImage({
+            current: '', // 当前显示图片的http链接
+            urls: [res.tempFilePath] // 需要预览的图片http链接列表
           })
-        })
-      }
+        }
+      })
     })
   },
 
@@ -200,7 +224,7 @@ Page({
   },
 
   // 设置大小的时候触发的touchMove事件
-  dragMove (e) {
+  dragMove(e) {
     var _this = this
     var dragType = e.target.dataset.drag
     switch (dragType) {
@@ -271,7 +295,7 @@ Page({
               cutH: initDragCutH - dragLength
             })
           }
-          else{
+          else {
             return
           }
         } else {
@@ -280,7 +304,7 @@ Page({
         break;
       case 'rightBottom':
         var dragLengthX = (sizeConfPageX - e.touches[0].pageX) * dragScaleP
-        var dragLengthY = (sizeConfPageY - e.touches[0].pageY)  * dragScaleP
+        var dragLengthY = (sizeConfPageY - e.touches[0].pageY) * dragScaleP
         if (initDragCutH >= dragLengthY && initDragCutW >= dragLengthX) {
           // bottom 方向的变化
           if ((dragLengthY < 0 && _this.data.cropperH > initDragCutT + _this.data.cutH) || (dragLengthY > 0)) {
@@ -311,41 +335,41 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-  
+
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-  
+
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-  
+
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-  
+
   },
 
   /**
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-  
+
   }
 })
