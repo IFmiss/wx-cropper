@@ -1,46 +1,45 @@
-// pages/wx-cropper/index.js
-// 手机的宽度
-var windowWRPX = 750
-// 拖动时候的 pageX
-var pageX = 0
-// 拖动时候的 pageY
-var pageY = 0
-
-var pixelRatio = wx.getSystemInfoSync().pixelRatio
-
-// 调整大小时候的 pageX
-var sizeConfPageX = 0
-// 调整大小时候的 pageY
-var sizeConfPageY = 0
-
-var initDragCutW = 0
-var initDragCutL = 0
-var initDragCutH = 0
-var initDragCutT = 0
-var qualityWidth = 1080
-var innerAspectRadio = 1
-// 移动时 手势位移与 实际元素位移的比
-var dragScaleP = 2
+/**
+ * wx-cropper 1.1
+ */
+let SCREEN_WIDTH = 750
+let PAGE_X, // 手按下的x位置
+    PAGE_Y, // 手按下y的位置
+    PR = wx.getSystemInfoSync().pixelRatio, // dpi
+    T_PAGE_X, // 手移动的时候x的位置
+    T_PAGE_Y, // 手移动的时候Y的位置
+    CUT_L,  // 初始化拖拽元素的left值
+    CUT_T,  // 初始化拖拽元素的top值
+    CUT_R,  // 初始化拖拽元素的
+    CUT_B,  // 初始化拖拽元素的
+    CUT_W,  // 初始化拖拽元素的宽度
+    CUT_H,  //  初始化拖拽元素的高度
+    IMG_RATIO,  // 图片比例
+    IMG_REAL_W,  // 图片实际的宽度
+    IMG_REAL_H,   // 图片实际的高度
+    DRAFG_MOVE_RATIO = 750 / wx.getSystemInfoSync().windowWidth,  //移动时候的比例,
+    INIT_DRAG_POSITION = 200,   // 初始化屏幕宽度和裁剪区域的宽度之差，用于设置初始化裁剪的宽度
+    DRAW_IMAGE_W = 1080 // 设置生成的图片宽度
 
 Page({
   /**
    * 页面的初始数据
    */
   data: {
-    // imageSrc: 'https://lpd.hi-finance.com.cn/20170918001.jpg',
-    // 'https://lpd.hi-finance.com.cn/9019013.png'
-    imageSrc: 'https://lpd.hi-finance.com.cn/20170918001.jpg',
+    imageSrc:'http://www.bing.com/az/hprichbg/rb/BulgariaPerseids_ZH-CN11638911564_1920x1080.jpg',
     returnImage: '',
     isShowImg: false,
     // 初始化的宽高
-    cropperInitW: windowWRPX,
-    cropperInitH: windowWRPX,
+    cropperInitW: SCREEN_WIDTH,
+    cropperInitH: SCREEN_WIDTH,
     // 动态的宽高
-    cropperW: windowWRPX,
-    cropperH: windowWRPX,
+    cropperW: SCREEN_WIDTH,
+    cropperH: SCREEN_WIDTH,
     // 动态的left top值
     cropperL: 0,
     cropperT: 0,
+
+    transL: 0,
+    transT:0,
 
     // 图片缩放值
     scaleP: 0,
@@ -52,8 +51,10 @@ Page({
     cutH: 0,
     cutL: 0,
     cutT: 0,
-    qualityWidth: qualityWidth,
-    innerAspectRadio: innerAspectRadio
+    cutB: SCREEN_WIDTH,
+    cutR: '100%',
+    qualityWidth: DRAW_IMAGE_W,
+    innerAspectRadio: DRAFG_MOVE_RATIO
   },
 
   /**
@@ -67,11 +68,10 @@ Page({
    */
   onReady: function () {
 
-    // this.loadImage();
+    this.loadImage();
 
   },
   getImage: function () {
-
     var _this = this
     wx.chooseImage({
       success: function (res) {
@@ -81,9 +81,6 @@ Page({
         _this.loadImage();
       },
     })
-    // wx.showToast({
-    //   title: 'sss',
-    // })
   },
   loadImage: function () {
     var _this = this
@@ -93,49 +90,52 @@ Page({
 
     wx.getImageInfo({
       src: _this.data.imageSrc,
-      // src:src,
       success: function success(res) {
-        innerAspectRadio = res.width / res.height;
+        IMG_REAL_W = res.width
+        IMG_REAL_H = res.height
+        IMG_RATIO = IMG_REAL_W / IMG_REAL_H
+        let minRange = IMG_REAL_W > IMG_REAL_H ? IMG_REAL_W : IMG_REAL_H
+        INIT_DRAG_POSITION = minRange > INIT_DRAG_POSITION ? INIT_DRAG_POSITION : minRange
+        console.log(minRange)
+        console.log(INIT_DRAG_POSITION)
         // 根据图片的宽高显示不同的效果   保证图片可以正常显示
-        if (innerAspectRadio >= 1) {
+        if (IMG_RATIO >= 1) {
           _this.setData({
-            cropperW: windowWRPX,
-            cropperH: windowWRPX / innerAspectRadio,
+            cropperW: SCREEN_WIDTH,
+            cropperH: SCREEN_WIDTH / IMG_RATIO,
             // 初始化left right
-            cropperL: Math.ceil((windowWRPX - windowWRPX) / 2),
-            cropperT: Math.ceil((windowWRPX - windowWRPX / innerAspectRadio) / 2),
+            cropperL: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH) / 2),
+            cropperT: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH / IMG_RATIO) / 2),
             // 裁剪框  宽高  
-            cutW: windowWRPX - 200,
-            cutH: windowWRPX / innerAspectRadio - 200,
-            cutL: Math.ceil((windowWRPX - windowWRPX + 200) / 2),
-            cutT: Math.ceil((windowWRPX / innerAspectRadio - (windowWRPX / innerAspectRadio - 200)) / 2),
+            cutW: SCREEN_WIDTH - INIT_DRAG_POSITION,
+            cutH: SCREEN_WIDTH / IMG_RATIO - INIT_DRAG_POSITION,
+            cutL: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH + INIT_DRAG_POSITION) / 2),
+            cutT: Math.ceil((SCREEN_WIDTH / IMG_RATIO - (SCREEN_WIDTH / IMG_RATIO - INIT_DRAG_POSITION)) / 2),
+            cutR: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH + INIT_DRAG_POSITION) / 2),
+            cutB: Math.ceil((SCREEN_WIDTH / IMG_RATIO - (SCREEN_WIDTH / IMG_RATIO - INIT_DRAG_POSITION)) / 2),
             // 图片缩放值
-            scaleP: res.width * pixelRatio / windowWRPX,
-            // 图片原始宽度 rpx
-            imageW: res.width * pixelRatio,
-            imageH: res.height * pixelRatio,
-
-            innerAspectRadio: innerAspectRadio
+            scaleP: IMG_REAL_W / SCREEN_WIDTH,
+            qualityWidth: DRAW_IMAGE_W,
+            innerAspectRadio: IMG_RATIO
           })
         } else {
           _this.setData({
-            cropperW: windowWRPX * innerAspectRadio,
-            cropperH: windowWRPX,
+            cropperW: SCREEN_WIDTH * IMG_RATIO,
+            cropperH: SCREEN_WIDTH,
             // 初始化left right
-            cropperL: Math.ceil((windowWRPX - windowWRPX * innerAspectRadio) / 2),
-            cropperT: Math.ceil((windowWRPX - windowWRPX) / 2),
+            cropperL: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH * IMG_RATIO) / 2),
+            cropperT: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH) / 2),
             // 裁剪框的宽高
-            cutW: windowWRPX * innerAspectRadio - 50,
-            cutH: 200,
-            cutL: Math.ceil((windowWRPX * innerAspectRadio - (windowWRPX * innerAspectRadio - 50)) / 2),
-            cutT: Math.ceil((windowWRPX - 200) / 2),
+            cutW: SCREEN_WIDTH * IMG_RATIO,
+            cutH: INIT_DRAG_POSITION,
+            cutL: Math.ceil((SCREEN_WIDTH * IMG_RATIO - (SCREEN_WIDTH * IMG_RATIO)) / 2),
+            cutT: Math.ceil((SCREEN_WIDTH - INIT_DRAG_POSITION) / 2),
+            cutB: Math.ceil((SCREEN_WIDTH - INIT_DRAG_POSITION) / 2),
+            cutR: Math.ceil((SCREEN_WIDTH * IMG_RATIO - (SCREEN_WIDTH * IMG_RATIO)) / 2),
             // 图片缩放值
-            scaleP: res.width * pixelRatio / windowWRPX,
-            // 图片原始宽度 rpx
-            imageW: res.width * pixelRatio,
-            imageH: res.height * pixelRatio,
-
-            innerAspectRadio: innerAspectRadio
+            scaleP: IMG_REAL_W / SCREEN_WIDTH,
+            qualityWidth: DRAW_IMAGE_W,
+            innerAspectRadio: IMG_RATIO
           })
         }
         _this.setData({
@@ -147,49 +147,57 @@ Page({
   },
   // 拖动时候触发的touchStart事件
   contentStartMove(e) {
-    pageX = e.touches[0].pageX
-    pageY = e.touches[0].pageY
+    PAGE_X = e.touches[0].pageX
+    PAGE_Y = e.touches[0].pageY
   },
 
   // 拖动时候触发的touchMove事件
   contentMoveing(e) {
     var _this = this
-    // _this.data.cutL + (e.touches[0].pageX - pageX)
-    // console.log(e.touches[0].pageX)
-    // console.log(e.touches[0].pageX - pageX)
-    var dragLengthX = (pageX - e.touches[0].pageX) * dragScaleP
-    var dragLengthY = (pageY - e.touches[0].pageY) * dragScaleP
-    var minX = Math.max(_this.data.cutL - (dragLengthX), 0)
-    var minY = Math.max(_this.data.cutT - (dragLengthY), 0)
-    var maxX = _this.data.cropperW - _this.data.cutW
-    var maxY = _this.data.cropperH - _this.data.cutH
+    var dragLengthX = (PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
+    var dragLengthY = (PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
+    // 左移
+    if (dragLengthX > 0) {
+      if (this.data.cutL - dragLengthX < 0) dragLengthX = this.data.cutL
+    } else {
+      if (this.data.cutR + dragLengthX < 0) dragLengthX = -this.data.cutR
+    }
+
+    if (dragLengthY > 0) {
+      if (this.data.cutT - dragLengthY < 0) dragLengthY = this.data.cutT
+    } else {
+      if (this.data.cutB + dragLengthY < 0) dragLengthY = -this.data.cutB
+    }
     this.setData({
-      cutL: Math.min(maxX, minX),
-      cutT: Math.min(maxY, minY),
+      cutL: this.data.cutL - dragLengthX,
+      cutT: this.data.cutT - dragLengthY,
+      cutR: this.data.cutR + dragLengthX,
+      cutB: this.data.cutB + dragLengthY
     })
-    console.log(`${maxX} ----- ${minX}`)
-    pageX = e.touches[0].pageX
-    pageY = e.touches[0].pageY
+
+    PAGE_X = e.touches[0].pageX
+    PAGE_Y = e.touches[0].pageY
+  },
+
+  contentTouchEnd () {
+
   },
 
   // 获取图片
   getImageInfo() {
-
     var _this = this
-
     wx.showLoading({
       title: '图片生成中...',
     })
     // 将图片写入画布
     const ctx = wx.createCanvasContext('myCanvas')
-    ctx.drawImage(_this.data.imageSrc, 0, 0, qualityWidth, qualityWidth / innerAspectRadio);
+    ctx.drawImage(_this.data.imageSrc, 0, 0, IMG_REAL_W, IMG_REAL_H);
     ctx.draw(true, () => {
       // 获取画布要裁剪的位置和宽度   均为百分比 * 画布中图片的宽度    保证了在微信小程序中裁剪的图片模糊  位置不对的问题 canvasT = (_this.data.cutT / _this.data.cropperH) * (_this.data.imageH / pixelRatio)
-      var canvasW = (_this.data.cutW / _this.data.cropperW) * qualityWidth
-      var canvasH = (_this.data.cutH / _this.data.cropperH) * qualityWidth / innerAspectRadio
-      var canvasL = (_this.data.cutL / _this.data.cropperW) * qualityWidth
-      var canvasT = (_this.data.cutT / _this.data.cropperH) * qualityWidth / innerAspectRadio
-      console.log(`canvasW:${canvasW} --- canvasH: ${canvasH} --- canvasL: ${canvasL} --- canvasT: ${canvasT} -------- _this.data.imageW: ${_this.data.imageW}  ------- _this.data.imageH: ${_this.data.imageH} ---- pixelRatio ${pixelRatio}`)
+      var canvasW = ((_this.data.cropperW - _this.data.cutL - _this.data.cutR) / _this.data.cropperW) * IMG_REAL_W
+      var canvasH = ((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH) * IMG_REAL_H
+      var canvasL = (_this.data.cutL / _this.data.cropperW) * IMG_REAL_W
+      var canvasT = (_this.data.cutT / _this.data.cropperH) * IMG_REAL_H
       wx.canvasToTempFilePath({
         x: canvasL,
         y: canvasT,
@@ -214,13 +222,14 @@ Page({
 
   // 设置大小的时候触发的touchStart事件
   dragStart(e) {
-    var _this = this
-    sizeConfPageX = e.touches[0].pageX
-    sizeConfPageY = e.touches[0].pageY
-    initDragCutW = _this.data.cutW
-    initDragCutL = _this.data.cutL
-    initDragCutT = _this.data.cutT
-    initDragCutH = _this.data.cutH
+    T_PAGE_X = e.touches[0].pageX
+    T_PAGE_Y = e.touches[0].pageY
+    CUT_W = this.data.cutW
+    CUT_L = this.data.cutL
+    CUT_R = this.data.cutR
+    CUT_B = this.data.cutB
+    CUT_T = this.data.cutT
+    CUT_H = this.data.cutH
   },
 
   // 设置大小的时候触发的touchMove事件
@@ -229,102 +238,45 @@ Page({
     var dragType = e.target.dataset.drag
     switch (dragType) {
       case 'right':
-        var dragLength = (sizeConfPageX - e.touches[0].pageX) * dragScaleP
-        if (initDragCutW >= dragLength) {
-          // 如果 移动小于0 说明是在往下啦  放大裁剪的高度  这样一来 图片的高度  最大 等于 图片的top值加 当前图片的高度  否则就说明超出界限
-          if (dragLength < 0 && _this.data.cropperW > initDragCutL + _this.data.cutW) {
-            this.setData({
-              cutW: initDragCutW - dragLength
-            })
-          }
-          // 如果是移动 大于0  说明在缩小  只需要缩小的距离小于原本裁剪的高度就ok
-          if (dragLength > 0) {
-            this.setData({
-              cutW: initDragCutW - dragLength
-            })
-          }
-          else {
-            return
-          }
-        } else {
-          return
-        }
+        var dragLength = (T_PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
+        if (CUT_R + dragLength < 0) dragLength = -CUT_R
+        this.setData({
+          cutR: CUT_R + dragLength
+        })
         break;
       case 'left':
-        var dragLength = (dragLength = sizeConfPageX - e.touches[0].pageX) * dragScaleP
-        console.log(dragLength)
-        if (initDragCutW >= dragLength && initDragCutL > dragLength) {
-          if (dragLength < 0 && Math.abs(dragLength) >= initDragCutW) return
-          this.setData({
-            cutL: initDragCutL - dragLength,
-            cutW: initDragCutW + dragLength
-          })
-        } else {
-          return;
-        }
+        var dragLength = (T_PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
+        if (CUT_L - dragLength < 0) dragLength = CUT_L
+        if ((CUT_L - dragLength) > (this.data.cropperW - this.data.cutR)) dragLength = CUT_L - (this.data.cropperW - this.data.cutR)
+        this.setData({
+          cutL: CUT_L - dragLength
+        })
         break;
       case 'top':
-        var dragLength = (sizeConfPageY - e.touches[0].pageY) * dragScaleP
-        if (initDragCutH >= dragLength && initDragCutT > dragLength) {
-          if (dragLength < 0 && Math.abs(dragLength) >= initDragCutH) return
-          this.setData({
-            cutT: initDragCutT - dragLength,
-            cutH: initDragCutH + dragLength
-          })
-        } else {
-          return;
-        }
+        var dragLength = (T_PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
+        if (CUT_T - dragLength < 0) dragLength = CUT_T
+        if ((CUT_T - dragLength) > (this.data.cropperH - this.data.cutB)) dragLength = CUT_T - (this.data.cropperH - this.data.cutB)
+        console.log(CUT_T - dragLength)
+        this.setData({
+          cutT: CUT_T - dragLength
+        })
         break;
       case 'bottom':
-        var dragLength = (sizeConfPageY - e.touches[0].pageY) * dragScaleP
-        // console.log(_this.data.cropperH > _this.data.cutT + _this.data.cutH)
-        console.log(dragLength)
-        console.log(initDragCutH >= dragLength)
-        console.log(_this.data.cropperH > initDragCutT + _this.data.cutH)
-        // 必须是 dragLength 向上缩小的时候必须小于原本的高度
-        if (initDragCutH >= dragLength) {
-          // 如果 移动小于0 说明是在往下啦  放大裁剪的高度  这样一来 图片的高度  最大 等于 图片的top值加 当前图片的高度  否则就说明超出界限
-          if (dragLength < 0 && _this.data.cropperH > initDragCutT + _this.data.cutH) {
-            this.setData({
-              cutH: initDragCutH - dragLength
-            })
-          }
-          // 如果是移动 大于0  说明在缩小  只需要缩小的距离小于原本裁剪的高度就ok
-          if (dragLength > 0) {
-            this.setData({
-              cutH: initDragCutH - dragLength
-            })
-          }
-          else {
-            return
-          }
-        } else {
-          return
-        }
+        var dragLength = (T_PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
+        if (CUT_B + dragLength < 0) dragLength = -CUT_B
+        this.setData({
+          cutB: CUT_B + dragLength
+        })
         break;
       case 'rightBottom':
-        var dragLengthX = (sizeConfPageX - e.touches[0].pageX) * dragScaleP
-        var dragLengthY = (sizeConfPageY - e.touches[0].pageY) * dragScaleP
-        if (initDragCutH >= dragLengthY && initDragCutW >= dragLengthX) {
-          // bottom 方向的变化
-          if ((dragLengthY < 0 && _this.data.cropperH > initDragCutT + _this.data.cutH) || (dragLengthY > 0)) {
-            this.setData({
-              cutH: initDragCutH - dragLengthY
-            })
-          }
-
-          // right 方向的变化
-          if ((dragLengthX < 0 && _this.data.cropperW > initDragCutL + _this.data.cutW) || (dragLengthX > 0)) {
-            this.setData({
-              cutW: initDragCutW - dragLengthX
-            })
-          }
-          else {
-            return
-          }
-        } else {
-          return
-        }
+        var dragLengthX = (T_PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
+        var dragLengthY = (T_PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
+        if (CUT_B + dragLengthY < 0) dragLengthY = -CUT_B
+        if (CUT_R + dragLengthX < 0) dragLengthX = -CUT_R
+        this.setData({
+          cutB: CUT_B + dragLengthY,
+          cutR: CUT_R + dragLengthX
+        })
         break;
       default:
         break;
