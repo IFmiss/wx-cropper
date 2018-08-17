@@ -24,8 +24,8 @@ QQ交流群： 424418160
 
 ### 显示效果
 #### 裁剪之前的效果
-![](https://github.com/IFmiss/wx-cropper/blob/master/2.jpg) 
+![](https://github.com/IFmiss/wx-cropper/blob/master/1.jpg) 
 
 #### 裁剪之后的效果
-![](https://github.com/IFmiss/wx-cropper/blob/master/1.jpg) 
+![](https://github.com/IFmiss/wx-cropper/blob/master/2.jpg) 
 
