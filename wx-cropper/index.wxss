@@ -238,12 +238,21 @@
   -webkit-transform: translate3d(-50%,-50%,0);
   transform: translate3d(-50%,-50%,0);
   cursor: n-resize;
-  width: 24rpx;
-  height: 24rpx;
+  width: 16rpx;
+  height: 16rpx;
   background-color: #69f;
   position: absolute;
   z-index: 1112;
   opacity: 1;
+}
+
+.point-rb::before{
+  content: '';
+  position: absolute;
+  top: -12rpx;
+  left: -12rpx;
+  right: -12rpx;
+  bottom: -12rpx;
 }
 
 .point-b{
