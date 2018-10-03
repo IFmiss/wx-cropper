@@ -18,7 +18,7 @@ let PAGE_X, // 手按下的x位置
     IMG_REAL_H,   // 图片实际的高度
     DRAFG_MOVE_RATIO = 750 / wx.getSystemInfoSync().windowWidth,  //移动时候的比例,
     INIT_DRAG_POSITION = 200,   // 初始化屏幕宽度和裁剪区域的宽度之差，用于设置初始化裁剪的宽度
-    DRAW_IMAGE_W = 10000 // 设置生成的图片宽度
+    DRAW_IMAGE_W = IMG_REAL_W // 设置生成的图片宽度
 
 Page({
   /**
