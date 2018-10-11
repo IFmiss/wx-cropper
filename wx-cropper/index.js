@@ -3,22 +3,22 @@
  */
 let SCREEN_WIDTH = 750
 let PAGE_X, // 手按下的x位置
-    PAGE_Y, // 手按下y的位置
-    PR = wx.getSystemInfoSync().pixelRatio, // dpi
-    T_PAGE_X, // 手移动的时候x的位置
-    T_PAGE_Y, // 手移动的时候Y的位置
-    CUT_L,  // 初始化拖拽元素的left值
-    CUT_T,  // 初始化拖拽元素的top值
-    CUT_R,  // 初始化拖拽元素的
-    CUT_B,  // 初始化拖拽元素的
-    CUT_W,  // 初始化拖拽元素的宽度
-    CUT_H,  //  初始化拖拽元素的高度
-    IMG_RATIO,  // 图片比例
-    IMG_REAL_W,  // 图片实际的宽度
-    IMG_REAL_H,   // 图片实际的高度
-    DRAFG_MOVE_RATIO = 750 / wx.getSystemInfoSync().windowWidth,  //移动时候的比例,
-    INIT_DRAG_POSITION = 200,   // 初始化屏幕宽度和裁剪区域的宽度之差，用于设置初始化裁剪的宽度
-    DRAW_IMAGE_W = IMG_REAL_W // 设置生成的图片宽度
+  PAGE_Y, // 手按下y的位置
+  PR = wx.getSystemInfoSync().pixelRatio, // dpi
+  T_PAGE_X, // 手移动的时候x的位置
+  T_PAGE_Y, // 手移动的时候Y的位置
+  CUT_L,  // 初始化拖拽元素的left值
+  CUT_T,  // 初始化拖拽元素的top值
+  CUT_R,  // 初始化拖拽元素的
+  CUT_B,  // 初始化拖拽元素的
+  CUT_W,  // 初始化拖拽元素的宽度
+  CUT_H,  //  初始化拖拽元素的高度
+  IMG_RATIO,  // 图片比例
+  IMG_REAL_W,  // 图片实际的宽度
+  IMG_REAL_H,   // 图片实际的高度
+  DRAFG_MOVE_RATIO = 750 / wx.getSystemInfoSync().windowWidth,  //移动时候的比例,
+  INIT_DRAG_POSITION = 200,   // 初始化屏幕宽度和裁剪区域的宽度之差，用于设置初始化裁剪的宽度
+  DRAW_IMAGE_W // 设置生成的图片宽度
 
 Page({
   /**
@@ -98,7 +98,7 @@ Page({
     wx.getImageInfo({
       src: _this.data.imageSrc,
       success: function success(res) {
-        IMG_REAL_W = res.width
+        DRAW_IMAGE_W = IMG_REAL_W = res.width
         IMG_REAL_H = res.height
         IMG_RATIO = IMG_REAL_W / IMG_REAL_H
         let minRange = IMG_REAL_W > IMG_REAL_H ? IMG_REAL_W : IMG_REAL_H
@@ -145,7 +145,7 @@ Page({
       }
     })
   },
-  
+
   /**
    * 拖动时候触发的touchStart事件
    */
@@ -176,7 +176,7 @@ Page({
     } else {
       if (this.data.cutR + dragLengthX < 0) dragLengthX = -this.data.cutR
     }
-    
+
 
     // 上移下移
     if (dragLengthY > 0) {
