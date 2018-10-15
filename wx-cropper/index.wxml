@@ -26,8 +26,9 @@
     </view>
   </view>
   <view class='cropper-config'>
-    <button type="primary reverse" bindtap="getImage" style='margin-top: 30rpx;'> 选择图片 </button>
-    <button type="primary" bindtap="getImageInfo" style='margin-top: 30rpx;'> 点击生成图片 </button>
+    <text class="cropper-cancle" bindtap="close">取消</text>
+    <text class="cropper-cancle" bindtap="getImage">选择图片</text>
+    <text class="cropper-save" bindtap="getImageInfo">完成</text>
   </view>
   <canvas canvas-id="myCanvas" style="position:absolute;border: 1px solid red; width:{{qualityWidth}}px;height:{{qualityWidth/innerAspectRadio}}px;top:-9999px;left:-9999px;"></canvas>
 </view>

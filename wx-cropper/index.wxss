@@ -1,4 +1,14 @@
 /* pages/wx-cropper/index.wxss */
+Page {
+  /* 点的颜色 */
+  --primary-color: #69f;
+  /* 边框颜色 */
+  --primary-color-outline: rgba(102, 153, 255, .75);
+  /* 虚线颜色 */
+  --primary-color-dashed: rgba(255,255,255,0.5);
+  /* 裁剪区域背景色 */
+  --box-bg: rgba(255,255,255,0.3);
+}
 .wx-content-info{
   position: fixed;
   top: 0;
@@ -8,20 +18,37 @@
   display: block;
   align-items: center;
   flex-direction: column;
+  background: #000;
 }
 
 .cropper-config{
-  padding: 20rpx 40rpx;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+
+.cropper-config .cropper-cancle, .cropper-config .cropper-save{
+  color: #fff;
+  font-size: 26rpx;
+  padding: 15rpx 25px;
 }
 
 .cropper-content{
-  min-height: 750rpx;
-  width: 100%;
+  min-height: 720rpx;
+  width: 720rpx;
+  margin: 0 auto;
+  margin-top: 80rpx;
 }
 
 .wx-corpper{
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -62,7 +89,7 @@
 /* 内部的信息 */
 .wx-corpper-crop-box{
   position: absolute;
-  background: rgba(255,255,255,0.3); 
+  background: var(--box-bg); 
   z-index: 2;
 }
 
@@ -72,8 +99,7 @@
   width: 100%;
   height: 100%;
   overflow: visible;
-  outline: 1px solid #69f;
-  outline-color: rgba(102, 153, 255, .75)
+  outline: 1px solid var(--primary-color-outline);
 }
 
 /* 横向虚线 */
@@ -83,8 +109,8 @@
   left: 0;
   width: 100%;
   height: 33.33333333%;
-  border-top: 1px dashed rgba(255,255,255,0.5);
-  border-bottom: 1px dashed rgba(255,255,255,0.5);
+  border-top: 1rpx dashed var(--primary-color-dashed);
+  border-bottom: 1rpx dashed var(--primary-color-dashed);
 }
 
 /* 纵向虚线 */
@@ -94,8 +120,8 @@
   top: 0;
   width: 33.33333333%;
   height: 100%;
-  border-left: 1px dashed rgba(255,255,255,0.5);
-  border-right: 1px dashed rgba(255,255,255,0.5);
+  border-left: 1rpx dashed var(--primary-color-dashed);
+  border-right: 1rpx dashed var(--primary-color-dashed);
 }
 
 /* 四个方向的线  为了之后的拖动事件*/
@@ -103,7 +129,7 @@
   position: absolute;
   display: block;
   width: 100%;
-  background-color: #69f;
+  background-color: var(--primary-color);
   top: 0;
   left: 0;
   height: 1px;
@@ -128,7 +154,7 @@
 .wx-cropper-line-r{
   position: absolute;
   display: block;
-  background-color: #69f;
+  background-color: var(--primary-color);
   top: 0;
   right: 0px;
   width: 1px;
@@ -154,7 +180,7 @@
   position: absolute;
   display: block;
   width: 100%;
-  background-color: #69f;
+  background-color: var(--primary-color);
   bottom: 0;
   left: 0;
   height: 1px;
@@ -179,7 +205,7 @@
 .wx-cropper-line-l{
   position: absolute;
   display: block;
-  background-color: #69f;
+  background-color: var(--primary-color);
   top: 0;
   left: 0;
   width: 1px;
@@ -204,7 +230,7 @@
 .wx-cropper-point{
   width: 5px;
   height: 5px;
-  background-color: #69f;
+  /* background-color: var(--primary-color); */
   opacity: .75;
   position: absolute;
   z-index: 3;
@@ -233,26 +259,38 @@
 }
 
 .point-rb{
-  left: 100%;
-  top: 100%;
-  -webkit-transform: translate3d(-50%,-50%,0);
-  transform: translate3d(-50%,-50%,0);
+  right: 0;
+  bottom: 0;
   cursor: n-resize;
-  width: 16rpx;
-  height: 16rpx;
-  background-color: #69f;
+  width: 29rpx;
+  height: 29rpx;
+  -webkit-transform: translate3d(50%,50%,0);
   position: absolute;
   z-index: 1112;
   opacity: 1;
 }
 
-.point-rb::before{
+.point-rb::before, .point-rb::after, 
+.point-tr::before, .point-tr::after, 
+.point-bl::before, .point-bl::after, 
+.point-lt::before, .point-lt::after{
   content: '';
   position: absolute;
-  top: -12rpx;
-  left: -12rpx;
-  right: -12rpx;
-  bottom: -12rpx;
+  background-color: var(--primary-color);
+} 
+
+.point-rb::before{
+  width: 6rpx;
+  height: 30rpx;
+  right: calc(50% - 6rpx);
+  bottom: calc(50% - 6rpx);
+}
+
+.point-rb::after{
+  height: 6rpx;
+  width: 30rpx;
+  right: calc(50% - 6rpx);
+  bottom: calc(50% - 6rpx);
 }
 
 .point-b{
