@@ -243,13 +243,6 @@ Page {
   cursor: n-resize;
 }
 
-.point-tr{
-  top: -3px;
-  left: 100%;
-  margin-left: -3px;
-  cursor: n-resize;
-}
-
 .point-r{
   top: 50%;
   left:100%;
@@ -258,16 +251,37 @@ Page {
   cursor: n-resize;
 }
 
-.point-rb{
-  right: 0;
-  bottom: 0;
+.point-tr, .point-rb, .point-bl, .point-lt{
   cursor: n-resize;
   width: 29rpx;
   height: 29rpx;
-  -webkit-transform: translate3d(50%,50%,0);
   position: absolute;
   z-index: 1112;
   opacity: 1;
+}
+
+.point-rb{
+  right: 0;
+  bottom: 0;
+  -webkit-transform: translate3d(50%,50%,0);
+}
+
+.point-tr{
+  right: 0;
+  top: 0;
+  -webkit-transform: translate3d(50%,-50%,0);
+}
+
+.point-bl{
+  left: 0;
+  bottom: 0;
+  -webkit-transform: translate3d(-50%,50%,0);
+}
+
+.point-lt{
+  top: 0;
+  left: 0;
+  -webkit-transform: translate3d(-50%,-50%,0);
 }
 
 .point-rb::before, .point-rb::after, 
@@ -279,6 +293,7 @@ Page {
   background-color: var(--primary-color);
 } 
 
+/* 右下 */
 .point-rb::before{
   width: 6rpx;
   height: 30rpx;
@@ -293,16 +308,53 @@ Page {
   bottom: calc(50% - 6rpx);
 }
 
-.point-b{
-  left:50%;
-  top: 100%;
-  margin-left: -3px;
-  margin-top: -3px;
-  cursor: n-resize;
+/* 右上 */
+.point-tr::before{
+  width: 6rpx;
+  height: 30rpx;
+  right: calc(50% - 6rpx);
+  top: calc(50% - 6rpx);
 }
 
-.point-bl{
-  left:0%;
+.point-tr::after{
+  height: 6rpx;
+  width: 30rpx;
+  right: calc(50% - 6rpx);
+  top: calc(50% - 6rpx);
+}
+
+/* 左下 */
+.point-bl::before{
+  width: 6rpx;
+  height: 30rpx;
+  left: calc(50% - 6rpx);
+  bottom: calc(50% - 6rpx);
+}
+
+.point-bl::after{
+  height: 6rpx;
+  width: 30rpx;
+  left: calc(50% - 6rpx);
+  bottom: calc(50% - 6rpx);
+}
+
+/* 左上 */
+.point-lt::before{
+  width: 6rpx;
+  height: 30rpx;
+  left: calc(50% - 6rpx);
+  top: calc(50% - 6rpx);
+}
+
+.point-lt::after{
+  height: 6rpx;
+  width: 30rpx;
+  left: calc(50% - 6rpx);
+  top: calc(50% - 6rpx);
+}
+
+.point-b{
+  left:50%;
   top: 100%;
   margin-left: -3px;
   margin-top: -3px;
@@ -312,14 +364,6 @@ Page {
 .point-l{
   left:0%;
   top: 50%;
-  margin-left: -3px;
-  margin-top: -3px;
-  cursor: n-resize;
-}
-
-.point-lt{
-  left:0%;
-  top: 0%;
   margin-left: -3px;
   margin-top: -3px;
   cursor: n-resize;
