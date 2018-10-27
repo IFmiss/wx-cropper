@@ -43,7 +43,7 @@ Page {
   min-height: 720rpx;
   width: 720rpx;
   margin: 0 auto;
-  margin-top: 80rpx;
+  margin-top: 8rpx;
 }
 
 .wx-corpper{
