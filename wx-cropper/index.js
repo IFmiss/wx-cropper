@@ -70,9 +70,9 @@ Page({
    */
   data: {
     // 之后可以动态替换
-    // imageSrc: 'http://www.bing.com/az/hprichbg/rb/BulgariaPerseids_ZH-CN11638911564_1920x1080.jpg',
+    imageSrc: 'http://www.bing.com/az/hprichbg/rb/BulgariaPerseids_ZH-CN11638911564_1920x1080.jpg',
     // imageSrc: 'http://pic.ffpic.com/files/2014/0331/0331dytqcazsjbz9.jpg',
-    imageSrc: 'http://pic.shejiben.com/mall/2013/10/25/20131025235159-933db4b4_m.jpg',
+    // imageSrc: 'http://pic.shejiben.com/mall/2013/10/25/20131025235159-933db4b4_m.jpg',
     // 是否显示图片(在图片加载完成之后设置为true)
     isShowImg: false,
 
@@ -163,7 +163,7 @@ Page({
             cropperH: CROPPER_WIDTH / IMG_RATIO,
             // 初始化left right
             cropperL: Math.ceil((CROPPER_WIDTH - CROPPER_WIDTH) / 2),
-            cropperT: Math.ceil((CROPPER_WIDTH - CROPPER_WIDTH / IMG_RATIO) / 2),
+            cropperT: 0,
             cutL: cropperPosition.left,
             cutT: cropperPosition.top,
             cutR: cropperPosition.right,
@@ -239,7 +239,6 @@ Page({
     if (radio >= 1) {
       cropperW = CROPPER_WIDTH
       cropperH = CROPPER_WIDTH / IMG_RATIO
-
       if (radio > CROPPER_AREA_RATIO) {
         return {
           left: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),

@@ -40,10 +40,12 @@ Page {
 }
 
 .cropper-content{
-  min-height: 720rpx;
+  min-height: calc(100% - 80rpx);
   width: 720rpx;
   margin: 0 auto;
   margin-top: 8rpx;
+  display: flex;
+  align-items: center;
 }
 
 .wx-corpper{

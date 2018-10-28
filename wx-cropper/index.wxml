@@ -1,7 +1,7 @@
 <!--pages/wx-cropper/index.wxml-->
 <view class="wx-content-info">
   <view class='cropper-content'>
-    <view wx:if="{{isShowImg}}" class="wx-corpper" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx;background:#000">
+    <view wx:if="{{isShowImg}}" class="wx-corpper" style="background:#000;">
       <view class="wx-corpper-content" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx;left:{{cropperL}}rpx;top:{{cropperT}}rpx">
       <image src="{{imageSrc}}" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx"></image>
         <view class="wx-corpper-crop-box" bindtouchstart="contentStartMove" bindtouchmove="contentMoveing" bindtouchend="contentTouchEnd" style="left:{{cutL}}rpx;top:{{cutT}}rpx;right:{{cutR}}rpx;bottom:{{cutB}}rpx">
