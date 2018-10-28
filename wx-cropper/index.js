@@ -15,7 +15,7 @@ const CROPPER_RATIO = 0.6666
  * 比例为宽高比 区间为 0.25 - 4
  * 设置为0的时候则是不固定宽高
  */
-const CROPPER_AREA_RATIO = 0.6666
+const CROPPER_AREA_RATIO = 1
 
 // 裁剪的位置
 let CUT_L,  // 初始化拖拽元素的left值
@@ -31,7 +31,7 @@ let CUT_L,  // 初始化拖拽元素的left值
     PAGE_X, // 手按下的x位置
     PAGE_Y, // 手按下y的位置
     T_PAGE_X, // 手移动的时候x的位置
-    T_PAGE_Y, // 手移动的时候Y的位置
+    T_PAGE_Y, // 手移动的时候Y的位置x
 
     PR = wx.getSystemInfoSync().pixelRatio, // dpi
 
@@ -94,8 +94,9 @@ Page({
     // 裁剪框 宽高
     cutL: 0,
     cutT: 0,
-    cutB: CROPPER_WIDTH,
-    cutR: '100%',
+    cutB: 0,
+    cutR: 0,
+
     qualityWidth: DRAW_IMAGE_W,
     innerAspectRadio: DRAFG_MOVE_RATIO
   },
@@ -110,13 +111,13 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-
+    // 初始化
     this.loadImage();
-
   },
 
   /**
    * 选择本地图片
+   * 基于底部中间的按钮的点击事件
    */
   getImage: function () {
     var _this = this
@@ -236,10 +237,9 @@ Page({
 
     // 宽大于高
     if (radio >= 1) {
-      console.log('3333333')
       cropperW = CROPPER_WIDTH
       cropperH = CROPPER_WIDTH / IMG_RATIO
-      console.log(radio)
+
       if (radio > CROPPER_AREA_RATIO) {
         return {
           left: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
@@ -247,13 +247,12 @@ Page({
           top: 0,
           bottom: 0
         }
-      } else {
-        return {
-          left: 0,
-          right: 0,
-          top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
-          bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
-        }
+      }
+      return {
+        left: 0,
+        right: 0,
+        top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
+        bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
       }
     } else {
       // 此时需要判断图片的比例以设定显示裁剪区域的比例
@@ -262,21 +261,18 @@ Page({
       cropperW = CROPPER_WIDTH / cropper_real_ratio * IMG_RATIO
       cropperH = CROPPER_WIDTH / cropper_real_ratio
       if (radio < CROPPER_AREA_RATIO) {
-        console.log(CROPPER_AREA_RATIO)
         return {
           left: 0,
           right: 0,
           top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
           bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
         }
-      } else {
-        console.log('2222222')
-        return {
-          left: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
-          right: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
-          top: 0,
-          bottom: 0
-        }
+      }
+      return {
+        left: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
+        right: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
+        top: 0,
+        bottom: 0
       }
     }
 
@@ -366,19 +362,7 @@ Page({
       var canvasH = ((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH) * IMG_REAL_H
       var canvasL = (_this.data.cutL / _this.data.cropperW) * IMG_REAL_W
       var canvasT = (_this.data.cutT / _this.data.cropperH) * IMG_REAL_H
-      console.log('canvasH', _this.data.cropperH - _this.data.cutT - _this.data.cutB)
-      console.log('_this.data.cropperH)', _this.data.cropperH)
-      console.log('w', _this.data.cropperW - _this.data.cutL - _this.data.cutR)
-      console.log('w', _this.data.cropperW)
-      console.log(_this.data.cropperW / _this.data.cropperH)
-      console.log(IMG_REAL_W / IMG_REAL_H)
-      console.log((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH)
-      console.log('IMG_REAL_W', IMG_REAL_W)
-      console.log('IMG_REAL_H', IMG_REAL_H)
-      console.log(canvasL)
-      console.log(canvasT)
-      console.log(canvasW)
-      console.log(canvasH)
+
       // 生成图片
       wx.canvasToTempFilePath({
         x: canvasL,
@@ -432,7 +416,6 @@ Page({
         if (CROPPER_AREA_RATIO) {
           // 底部线的限制 不允许超出
           if (CUT_B + dragLength / CROPPER_AREA_RATIO < 0) return
-          console.log(dragLength)
           this.setData({
             cutR: CUT_R + dragLength,
             cutB: CUT_B + dragLength / CROPPER_AREA_RATIO

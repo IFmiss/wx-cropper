@@ -5,7 +5,7 @@ Page {
   /* 边框颜色 */
   --primary-color-outline: rgba(102, 153, 255, .75);
   /* 虚线颜色 */
-  --primary-color-dashed: rgba(255,255,255,0.5);
+  --primary-color-dashed: rgba(255,255,255,0.46);
   /* 裁剪区域背景色 */
   --box-bg: rgba(255,255,255,0.3);
 }
@@ -109,8 +109,8 @@ Page {
   left: 0;
   width: 100%;
   height: 33.33333333%;
-  border-top: 1rpx dashed var(--primary-color-dashed);
-  border-bottom: 1rpx dashed var(--primary-color-dashed);
+  border-top: 1px dashed var(--primary-color-dashed);
+  border-bottom: 1px dashed var(--primary-color-dashed);
 }
 
 /* 纵向虚线 */
@@ -120,8 +120,8 @@ Page {
   top: 0;
   width: 33.33333333%;
   height: 100%;
-  border-left: 1rpx dashed var(--primary-color-dashed);
-  border-right: 1rpx dashed var(--primary-color-dashed);
+  border-left: 1px dashed var(--primary-color-dashed);
+  border-right: 1px dashed var(--primary-color-dashed);
 }
 
 /* 四个方向的线  为了之后的拖动事件*/
