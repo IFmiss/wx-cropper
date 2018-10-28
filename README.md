@@ -29,9 +29,9 @@ QQ交流群： 424418160
 ### 注意：这里面的图片在你们的项目中可能会无法使用，在测试的话 可以用自己本地或者你们项目服务器下的图片地址
 
 ### 显示效果
-![](https://github.com/IFmiss/wx-cropper/blob/master/1.jpg) 
+![](https://github.com/IFmiss/wx-cropper/blob/v2/1.jpg) 
 
-![](https://github.com/IFmiss/wx-cropper/blob/master/2.jpg) 
+![](https://github.com/IFmiss/wx-cropper/blob/v2/2.jpg) 
 
-![](https://github.com/IFmiss/wx-cropper/blob/master/3.jpg) 
+![](https://github.com/IFmiss/wx-cropper/blob/v2/3.jpg) 
 
