@@ -124,6 +124,7 @@ Page({
     wx.chooseImage({
       success: function (res) {
         _this.setData({
+          isShowImg: false,
           imageSrc: res.tempFilePaths[0],
         })
         _this.loadImage();
