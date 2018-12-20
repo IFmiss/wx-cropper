@@ -8,7 +8,7 @@
 const CROPPER_WIDTH = 720
 
 // 裁剪显示的最大比例，如果裁剪的图片过长，则做限制，默认最大宽高比例为 宽640 / 高960 (宽高比例)
-const CROPPER_RATIO = 1
+const CROPPER_RATIO = 0.8
 
 /**
  * 初始化裁剪的比例 如果是正方形则是 1
@@ -358,13 +358,15 @@ Page({
     })
     // 将图片写入画布
     const ctx = wx.createCanvasContext('myCanvas')
-    ctx.drawImage(_this.data.imageSrc, 0, 0, IMG_REAL_W, IMG_REAL_H);
+    let w = this.data.qualityWidth
+    let h = this.data.qualityWidth / IMG_RATIO
+    ctx.drawImage(_this.data.imageSrc, 0, 0, w, h);
     ctx.draw(true, () => {
       // 获取画布要裁剪的位置和宽度   均为百分比 * 画布中图片的宽度    保证了在微信小程序中裁剪的图片模糊  位置不对的问题
-      var canvasW = ((_this.data.cropperW - _this.data.cutL - _this.data.cutR) / _this.data.cropperW) * IMG_REAL_W
-      var canvasH = ((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH) * IMG_REAL_H
-      var canvasL = (_this.data.cutL / _this.data.cropperW) * IMG_REAL_W
-      var canvasT = (_this.data.cutT / _this.data.cropperH) * IMG_REAL_H
+      var canvasW = ((_this.data.cropperW - _this.data.cutL - _this.data.cutR) / _this.data.cropperW) * w
+      var canvasH = ((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH) * h
+      var canvasL = (_this.data.cutL / _this.data.cropperW) * w
+      var canvasT = (_this.data.cutT / _this.data.cropperH) * h
 
       // 生成图片
       wx.canvasToTempFilePath({
