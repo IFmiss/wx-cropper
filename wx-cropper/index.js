@@ -8,7 +8,7 @@
 const CROPPER_WIDTH = 720
 
 // 裁剪显示的最大比例，如果裁剪的图片过长，则做限制，默认最大宽高比例为 宽640 / 高960 (宽高比例)
-const CROPPER_RATIO = 0.6666
+const CROPPER_RATIO = 1
 
 /**
  * 初始化裁剪的比例 如果是正方形则是 1
@@ -70,8 +70,8 @@ Page({
    */
   data: {
     // 之后可以动态替换
-    imageSrc: 'http://www.bing.com/az/hprichbg/rb/BulgariaPerseids_ZH-CN11638911564_1920x1080.jpg',
-    // imageSrc: 'http://pic.ffpic.com/files/2014/0331/0331dytqcazsjbz9.jpg',
+    // imageSrc: 'http://www.bing.com/az/hprichbg/rb/BulgariaPerseids_ZH-CN11638911564_1920x1080.jpg',
+    imageSrc: 'http://pic.ffpic.com/files/2014/0331/0331dytqcazsjbz9.jpg',
     // imageSrc: 'http://pic.shejiben.com/mall/2013/10/25/20131025235159-933db4b4_m.jpg',
     // 是否显示图片(在图片加载完成之后设置为true)
     isShowImg: false,
@@ -415,7 +415,16 @@ Page({
 
         if (CROPPER_AREA_RATIO) {
           // 底部线的限制 不允许超出
-          if (CUT_B + dragLength / CROPPER_AREA_RATIO < 0) return
+          // dragLength 最大不能超过CUT_B
+          if (CUT_B + dragLength / CROPPER_AREA_RATIO < 0) {
+            console.log(CUT_B / CROPPER_AREA_RATIO)
+            console.log(CUT_R)
+            this.setData({
+              cutR: CUT_R - CUT_B / CROPPER_AREA_RATIO,
+              cutB: 0
+            })
+            return
+          }
           this.setData({
             cutR: CUT_R + dragLength,
             cutB: CUT_B + dragLength / CROPPER_AREA_RATIO
@@ -434,7 +443,14 @@ Page({
 
         if (CROPPER_AREA_RATIO) {
           // 顶部线的限制 不允许超出
-          if (CUT_T - dragLength / CROPPER_AREA_RATIO < 0) return
+          // dragLength 最大不能超过CUT_T
+          if (CUT_T - dragLength / CROPPER_AREA_RATIO < 0) {
+            this.setData({
+              cutL: CUT_L - CUT_T,
+              cutT: 0
+            })
+            return
+          }
           this.setData({
             cutL: CUT_L - dragLength,
             cutT: CUT_T - dragLength / CROPPER_AREA_RATIO
@@ -452,7 +468,14 @@ Page({
 
         if (CROPPER_AREA_RATIO) {
           // left 线的限制 不允许超出
-          if (CUT_L - dragLength * CROPPER_AREA_RATIO < 0) return
+          // dragLength 最大不能超过CUT_L
+          if (CUT_L - dragLength * CROPPER_AREA_RATIO < 0) {
+            this.setData({
+              cutL: 0,
+              cutT: CUT_T - CUT_L
+            })
+            return
+          }
           this.setData({
             cutL: CUT_L - dragLength * CROPPER_AREA_RATIO,
             cutT: CUT_T - dragLength
@@ -470,7 +493,14 @@ Page({
 
         if (CROPPER_AREA_RATIO) {
           // right 线的限制 不允许超出
-          if (CUT_R + dragLength * CROPPER_AREA_RATIO < 0) return
+          // dragLength 最大不能超过 CUT_R
+          if (CUT_R + dragLength * CROPPER_AREA_RATIO < 0) {
+            this.setData({
+              cutR: 0,
+              cutB: CUT_B - CUT_R
+            })
+            return
+          }
           this.setData({
             cutR: CUT_R + dragLength * CROPPER_AREA_RATIO,
             cutB: CUT_B + dragLength
@@ -492,7 +522,14 @@ Page({
 
         if (CROPPER_AREA_RATIO) {
           // right 线的限制 不允许超出
-          if (CUT_R + dragLengthY * CROPPER_AREA_RATIO < 0) return
+          // dragLength 最大不能超过 CUT_R
+          if (CUT_R + dragLengthY * CROPPER_AREA_RATIO < 0) {
+            this.setData({
+              cutR: 0,
+              cutB: CUT_B - CUT_R
+            })
+            return
+          }
           this.setData({
             cutR: CUT_R + dragLengthY * CROPPER_AREA_RATIO,
             cutB: CUT_B + dragLengthY
