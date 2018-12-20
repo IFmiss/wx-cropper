@@ -179,7 +179,6 @@ Page({
           // let cropper_real_ratio = CROPPER_RATIO > IMG_RATIO ? CROPPER_RATIO : IMG_RATIO
 
           if (CROPPER_RATIO > IMG_RATIO) {
-            console.log((CROPPER_WIDTH / CROPPER_RATIO * IMG_RATIO) / (CROPPER_WIDTH / CROPPER_RATIO))
             CROPPER_IMG_W = CROPPER_WIDTH / CROPPER_RATIO * IMG_RATIO
             CROPPER_IMG_H = CROPPER_WIDTH / CROPPER_RATIO
           } else {
@@ -417,8 +416,6 @@ Page({
           // 底部线的限制 不允许超出
           // dragLength 最大不能超过CUT_B
           if (CUT_B + dragLength / CROPPER_AREA_RATIO < 0) {
-            console.log(CUT_B / CROPPER_AREA_RATIO)
-            console.log(CUT_R)
             this.setData({
               cutR: CUT_R - CUT_B / CROPPER_AREA_RATIO,
               cutB: 0
