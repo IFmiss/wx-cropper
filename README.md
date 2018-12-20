@@ -19,17 +19,21 @@ QQ交流群： 424418160
 ### 注意：这里面的图片在你们的项目中可能会无法使用，在测试的话 可以用自己本地或者你们项目服务器下的图片地址
 
 ### 显示效果
-![](https://github.com/IFmiss/wx-cropper/blob/v2/1.png) 
+#### 裁剪区域不固定宽高
+![](https://github.com/IFmiss/wx-cropper/blob/v2/3.jpg) 
+
 这是在裁剪区域设定不设置固定裁剪框的宽高比例，加载的时候会覆盖整张图片
+
 ```js
 CROPPER_AREA_RATIO = 0
 ```
+#### 裁剪区域固定宽高
+![](https://github.com/IFmiss/wx-cropper/blob/v2/2.jpg)
 
-![](https://github.com/IFmiss/wx-cropper/blob/v2/2.png) 
-裁剪区域固定宽高
 ```js
-CROPPER_AREA_RATIO = 0
+CROPPER_AREA_RATIO = 1
 ```
 
 #### 裁剪之后的效果
-![](https://github.com/IFmiss/wx-cropper/blob/v2/3.png) 
+
+![](https://github.com/IFmiss/wx-cropper/blob/v2/1.jpg) 
