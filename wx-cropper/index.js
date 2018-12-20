@@ -52,7 +52,10 @@ let CUT_L,  // 初始化拖拽元素的left值
 
     INIT_DRAG_POSITION = 0,   // 初始化屏幕宽度和裁剪区域的宽度之差，用于设置初始化裁剪的宽度
 
-    DRAW_IMAGE_W // 设置生成的图片宽度
+    DRAW_IMAGE_W, // 设置生成的图片宽度
+
+// 最大可显示得图片宽度，需要设定最大值，否则安卓部分机器会闪退, 控制qualityWidth的最大值
+    maxQW = 2550
 
 /**
  * 最小裁剪宽度  由于设置了裁剪的UI样式，裁剪的宽高必须要有最小宽度，这个宽度是裁剪长或者宽的最短一方的宽度
@@ -98,6 +101,7 @@ Page({
     cutR: 0,
 
     qualityWidth: DRAW_IMAGE_W,
+
     innerAspectRadio: DRAFG_MOVE_RATIO
   },
 
@@ -171,7 +175,7 @@ Page({
             cutB: cropperPosition.bottom,
             // 图片缩放值
             scaleP: IMG_REAL_W / CROPPER_WIDTH,
-            qualityWidth: DRAW_IMAGE_W,
+            qualityWidth: DRAW_IMAGE_W > maxQW ? maxQW : DRAW_IMAGE_W,
             innerAspectRadio: IMG_RATIO
           })
         } else {
@@ -207,7 +211,7 @@ Page({
             cutB: cropperPosition.bottom,
             // 图片缩放值
             scaleP: IMG_REAL_W / CROPPER_IMG_W,
-            qualityWidth: DRAW_IMAGE_W,
+            qualityWidth: DRAW_IMAGE_W > maxQW ? maxQW : DRAW_IMAGE_W,
             innerAspectRadio: IMG_RATIO
           })
         }
