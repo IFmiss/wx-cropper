@@ -33,8 +33,6 @@ let CUT_L,  // 初始化拖拽元素的left值
     T_PAGE_X, // 手移动的时候x的位置
     T_PAGE_Y, // 手移动的时候Y的位置x
 
-    PR = wx.getSystemInfoSync().pixelRatio, // dpi
-
 // 图片比例
     IMG_RATIO,
 
@@ -239,7 +237,7 @@ Page({
     // 如果 CROPPER_AREA_RATIO = 0 则不限制固定宽高 
     if (CROPPER_AREA_RATIO === 0) return { left, right, top,bottom }
 
-    // 宽大于高
+    // 宽大于等于高
     if (radio >= 1) {
       cropperW = CROPPER_WIDTH
       cropperH = CROPPER_WIDTH / IMG_RATIO
@@ -257,29 +255,27 @@ Page({
         top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
         bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
       }
-    } else {
-      // 此时需要判断图片的比例以设定显示裁剪区域的比例
-      let cropper_real_ratio = CROPPER_RATIO > IMG_RATIO ? CROPPER_RATIO : IMG_RATIO
-      // 高大于宽
-      cropperW = CROPPER_WIDTH / cropper_real_ratio * IMG_RATIO
-      cropperH = CROPPER_WIDTH / cropper_real_ratio
-      if (radio < CROPPER_AREA_RATIO) {
-        return {
-          left: 0,
-          right: 0,
-          top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
-          bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
-        }
-      }
-      return {
-        left: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
-        right: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
-        top: 0,
-        bottom: 0
-      }
     }
 
-    return 1
+    // 此时需要判断图片的比例以设定显示裁剪区域的比例
+    let cropper_real_ratio = CROPPER_RATIO > IMG_RATIO ? CROPPER_RATIO : IMG_RATIO
+    // 高大于宽
+    cropperW = CROPPER_WIDTH / cropper_real_ratio * IMG_RATIO
+    cropperH = CROPPER_WIDTH / cropper_real_ratio
+    if (radio < CROPPER_AREA_RATIO) {
+      return {
+        left: 0,
+        right: 0,
+        top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
+        bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
+      }
+    }
+    return {
+      left: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
+      right: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
+      top: 0,
+      bottom: 0
+    }
   },
 
   /**
@@ -296,15 +292,7 @@ Page({
   contentMoveing(e) {
     var _this = this
     var dragLengthX = (PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
-    var dragLengthY = (PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
-
-    /**
-     * 这里有一个小的问题
-     * 移动裁剪框 ios下 x方向没有移动的差距
-     * y方向手指移动的距离远大于实际裁剪框移动的距离
-     * 但是在有些机型上又是没有问题的，小米4测试没有上下移动产生的偏差，模拟器ok，但是iphone8p确实是有的，虽然模拟器也ok
-     * 小伙伴有兴趣可以找找原因
-     */
+    var dragLengthY = (PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO * DRAFG_MOVE_RATIO
 
     // 左移右移
     if (dragLengthX > 0) {
@@ -327,10 +315,6 @@ Page({
       cutB: this.data.cutB + dragLengthY
     })
 
-    // console.log('cutL', this.data.cutL)
-    // console.log('cutT', this.data.cutT)
-    // console.log('cutR', this.data.cutR)
-    // console.log('cutB', this.data.cutB)
 
     PAGE_X = e.touches[0].pageX
     PAGE_Y = e.touches[0].pageY
