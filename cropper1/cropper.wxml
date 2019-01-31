@@ -1,5 +1,4 @@
-<!--pages/wx-cropper/index.wxml-->
-<!-- <view class="wx-content-info">
+<view class="wx-content-info">
   <view class='cropper-content'>
     <view wx:if="{{isShowImg}}" class="wx-corpper" style="background:#000;">
       <view class="wx-corpper-content" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx;left:{{cropperL}}rpx;top:{{cropperT}}rpx">
@@ -31,10 +30,4 @@
     <text class="cropper-save" bindtap="getImageInfo">完成</text>
   </view>
   <canvas canvas-id="myCanvas" style="position:absolute;border: 1px solid red; width:{{qualityWidth}}px;height:{{qualityWidth/innerAspectRadio}}px;top:-9999px;left:-9999px;"></canvas>
-</view> -->
-<button bindtap="showCut">
-  点击显示裁剪模块
-</button>
-<view class="" hover-class="none" hover-stop-propagation="false">
-  <my-cropper bind:close="hideCut" wx:if="{{showCropper}}"/>
 </view>

@@ -77,6 +77,10 @@ Page({
     // 是否显示图片(在图片加载完成之后设置为true)
     isShowImg: false,
 
+    // 初始化的宽高
+    cropperInitW: CROPPER_WIDTH,
+    cropperInitH: CROPPER_WIDTH,
+
     // 动态的宽高
     cropperW: CROPPER_WIDTH,
     cropperH: CROPPER_WIDTH,
@@ -96,9 +100,7 @@ Page({
 
     qualityWidth: DRAW_IMAGE_W,
 
-    innerAspectRadio: DRAFG_MOVE_RATIO,
-
-    showCropper: false
+    innerAspectRadio: DRAFG_MOVE_RATIO
   },
 
   /**
@@ -112,7 +114,7 @@ Page({
    */
   onReady: function () {
     // 初始化
-    // this.loadImage();
+    this.loadImage();
   },
 
   /**
@@ -524,18 +526,6 @@ Page({
       default:
         break;
     }
-  },
-
-  showCut () {
-    this.setData({
-      showCropper: true
-    })
-  },
-
-  hideCut () {
-    this.setData({
-      showCropper: false
-    })
   },
 
   /**

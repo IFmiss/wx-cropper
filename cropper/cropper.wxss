@@ -1,3 +1,4 @@
+/* cropper/cropper.wxss */
 /* pages/wx-cropper/index.wxss */
 Page {
   /* 点的颜色 */
