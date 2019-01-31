@@ -8,14 +8,14 @@
 const CROPPER_WIDTH = 720
 
 // 裁剪显示的最大比例，如果裁剪的图片过长，则做限制，默认最大宽高比例为 宽640 / 高960 (宽高比例)
-const CROPPER_RATIO = 0.8
+const CROPPER_RATIO = 0.7
 
 /**
  * 初始化裁剪的比例 如果是正方形则是 1
- * 比例为宽高比 区间为 0.25 - 4
+ * 比例为宽高比 建议区间为 0.25 - 4
  * 设置为0的时候则是不固定宽高
  */
-const CROPPER_AREA_RATIO = 1
+const CROPPER_AREA_RATIO = 0.25
 
 // 裁剪的位置
 let CUT_L,  // 初始化拖拽元素的left值
@@ -74,7 +74,7 @@ Page({
   data: {
     // 之后可以动态替换
     // imageSrc: 'http://www.bing.com/az/hprichbg/rb/BulgariaPerseids_ZH-CN11638911564_1920x1080.jpg',
-    imageSrc: 'http://pic.ffpic.com/files/2014/0331/0331dytqcazsjbz9.jpg',
+    imageSrc: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1548138965392&di=8d000139a867a92e7552f6d70ab88c09&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201809%2F22%2F20180922160044_lxqwl.thumb.700_0.jpg',
     // imageSrc: 'http://pic.shejiben.com/mall/2013/10/25/20131025235159-933db4b4_m.jpg',
     // 是否显示图片(在图片加载完成之后设置为true)
     isShowImg: false,
@@ -421,9 +421,8 @@ Page({
         if (CROPPER_AREA_RATIO) {
           // 底部线的限制 不允许超出
           // dragLength 最大不能超过CUT_B
-          if (CUT_B + dragLength / CROPPER_AREA_RATIO < 0) {
+          if (CUT_B + dragLength / CROPPER_AREA_RATIO <= 0) {
             this.setData({
-              cutR: CUT_R - CUT_B / CROPPER_AREA_RATIO,
               cutB: 0
             })
             return
@@ -449,7 +448,6 @@ Page({
           // dragLength 最大不能超过CUT_T
           if (CUT_T - dragLength / CROPPER_AREA_RATIO < 0) {
             this.setData({
-              cutL: CUT_L - CUT_T,
               cutT: 0
             })
             return
@@ -474,8 +472,7 @@ Page({
           // dragLength 最大不能超过CUT_L
           if (CUT_L - dragLength * CROPPER_AREA_RATIO < 0) {
             this.setData({
-              cutL: 0,
-              cutT: CUT_T - CUT_L
+              cutL: 0
             })
             return
           }
@@ -499,8 +496,7 @@ Page({
           // dragLength 最大不能超过 CUT_R
           if (CUT_R + dragLength * CROPPER_AREA_RATIO < 0) {
             this.setData({
-              cutR: 0,
-              cutB: CUT_B - CUT_R
+              cutR: 0
             })
             return
           }
@@ -528,8 +524,7 @@ Page({
           // dragLength 最大不能超过 CUT_R
           if (CUT_R + dragLengthY * CROPPER_AREA_RATIO < 0) {
             this.setData({
-              cutR: 0,
-              cutB: CUT_B - CUT_R
+              cutR: 0
             })
             return
           }
