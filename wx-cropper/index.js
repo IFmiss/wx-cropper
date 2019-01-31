@@ -15,7 +15,7 @@ const CROPPER_RATIO = 0.7
  * 比例为宽高比 建议区间为 0.25 - 4
  * 设置为0的时候则是不固定宽高
  */
-const CROPPER_AREA_RATIO = 0.25
+const CROPPER_AREA_RATIO = 1
 
 // 裁剪的位置
 let CUT_L,  // 初始化拖拽元素的left值
@@ -296,15 +296,7 @@ Page({
   contentMoveing(e) {
     var _this = this
     var dragLengthX = (PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
-    var dragLengthY = (PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
-
-    /**
-     * 这里有一个小的问题
-     * 移动裁剪框 ios下 x方向没有移动的差距
-     * y方向手指移动的距离远大于实际裁剪框移动的距离
-     * 但是在有些机型上又是没有问题的，小米4测试没有上下移动产生的偏差，模拟器ok，但是iphone8p确实是有的，虽然模拟器也ok
-     * 小伙伴有兴趣可以找找原因
-     */
+    var dragLengthY = (PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO * DRAFG_MOVE_RATIO
 
     // 左移右移
     if (dragLengthX > 0) {
@@ -327,10 +319,6 @@ Page({
       cutB: this.data.cutB + dragLengthY
     })
 
-    // console.log('cutL', this.data.cutL)
-    // console.log('cutT', this.data.cutT)
-    // console.log('cutR', this.data.cutR)
-    // console.log('cutB', this.data.cutB)
 
     PAGE_X = e.touches[0].pageX
     PAGE_Y = e.touches[0].pageY
