@@ -15,7 +15,7 @@ const CROPPER_RATIO = 0.7
  * 比例为宽高比 建议区间为 0.25 - 4
  * 设置为0的时候则是不固定宽高
  */
-const CROPPER_AREA_RATIO = 0.25
+const CROPPER_AREA_RATIO = 0
 
 // 裁剪的位置
 let CUT_L,  // 初始化拖拽元素的left值
@@ -61,9 +61,9 @@ let CUT_L,  // 初始化拖拽元素的left值
  * 那么如果只能设置为100的时候
  * 那么最小缩放到200 100的效果，之后只能放大不能缩小
  */
- const MIN_CROPPER_DIS = 100
-
-
+ const MIN_CROPPER_DIS = 160
+ let MIN_CROPPER_DIS_X,
+     MIN_CROPPER_DIS_Y
 
 Page({
   /**
@@ -149,10 +149,12 @@ Page({
         IMG_REAL_H = res.height
         IMG_RATIO = IMG_REAL_W / IMG_REAL_H
 
-        let MIN_RANGE = IMG_REAL_W > IMG_REAL_H ? IMG_REAL_W : IMG_REAL_H
+        MIN_CROPPER_DIS_X = IMG_RATIO >=1 ? MIN_CROPPER_DIS * IMG_RATIO : MIN_CROPPER_DIS
 
-        // 用于设置图片的比例(以设置裁剪的比例，方便定位裁剪的left right top bottom)
-        INIT_DRAG_POSITION = MIN_RANGE > INIT_DRAG_POSITION ? INIT_DRAG_POSITION : MIN_RANGE
+        // let MIN_RANGE = IMG_REAL_W > IMG_REAL_H ? IMG_REAL_W : IMG_REAL_H
+
+        // // 用于设置图片的比例(以设置裁剪的比例，方便定位裁剪的left right top bottom)
+        // INIT_DRAG_POSITION = MIN_RANGE > INIT_DRAG_POSITION ? INIT_DRAG_POSITION : MIN_RANGE
 
         // 拿到裁剪位置
         let cropperPosition = _this.initCropperPosition(IMG_RATIO, CROPPER_WIDTH)
@@ -398,7 +400,7 @@ Page({
       case 'right':
         var dragLength = (T_PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
         if (CUT_R + dragLength < 0) dragLength = - CUT_R
-        if (CUT_R + dragLength + MIN_CROPPER_DIS > this.data.cropperW - this.data.cutL) dragLength = (this.data.cropperW - this.data.cutL) - MIN_CROPPER_DIS - CUT_R
+        if (CUT_R + dragLength + MIN_CROPPER_DIS_X > this.data.cropperW - this.data.cutL)  dragLength = (this.data.cropperW - this.data.cutL) - MIN_CROPPER_DIS_X - CUT_R
 
         if (CROPPER_AREA_RATIO) {
           // 底部线的限制 不允许超出
@@ -423,7 +425,7 @@ Page({
       case 'left':
         var dragLength = (T_PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
         if (CUT_L - dragLength < 0) dragLength = CUT_L
-        if ((CUT_L - dragLength + MIN_CROPPER_DIS) > (this.data.cropperW - this.data.cutR)) dragLength = CUT_L - (this.data.cropperW - this.data.cutR) + MIN_CROPPER_DIS
+        if ((CUT_L - dragLength + MIN_CROPPER_DIS_X) > (this.data.cropperW - this.data.cutR)) dragLength = CUT_L - (this.data.cropperW - this.data.cutR) + MIN_CROPPER_DIS_X
 
         if (CROPPER_AREA_RATIO) {
           // 顶部线的限制 不允许超出
@@ -447,7 +449,7 @@ Page({
       case 'top':
         var dragLength = (T_PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
         if (CUT_T - dragLength < 0) dragLength = CUT_T
-        if ((CUT_T - dragLength + MIN_CROPPER_DIS) > this.data.cropperH - this.data.cutB) dragLength = CUT_T - (this.data.cropperH - this.data.cutB) + MIN_CROPPER_DIS
+        if ((CUT_T - dragLength + MIN_CROPPER_DIS_Y) > this.data.cropperH - this.data.cutB) dragLength = CUT_T - (this.data.cropperH - this.data.cutB) + MIN_CROPPER_DIS_Y
 
         if (CROPPER_AREA_RATIO) {
           // left 线的限制 不允许超出
@@ -471,7 +473,11 @@ Page({
       case 'bottom':
         var dragLength = (T_PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
         if (CUT_B + dragLength < 0) dragLength = - CUT_B
-        if (CUT_B + dragLength + MIN_CROPPER_DIS > this.data.cropperH - this.data.cutT) dragLength = (this.data.cropperH - this.data.cutT) - MIN_CROPPER_DIS - CUT_B
+        console.log(this.data.cropperH)
+        console.log(this.data.cutT)
+        console.log(MIN_CROPPER_DIS_Y)
+        console.log(CUT_B)
+        if (CUT_B + dragLength + MIN_CROPPER_DIS_Y > this.data.cropperH - this.data.cutT) dragLength = (this.data.cropperH - this.data.cutT) - MIN_CROPPER_DIS_Y - CUT_B
 
         if (CROPPER_AREA_RATIO) {
           // right 线的限制 不允许超出
@@ -497,9 +503,9 @@ Page({
         var dragLengthX = (T_PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
         var dragLengthY = (T_PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
         if (CUT_B + dragLengthY < 0) dragLengthY = - CUT_B
-        if (CUT_B + dragLengthY + MIN_CROPPER_DIS > this.data.cropperH - this.data.cutT) dragLengthY = (this.data.cropperH - this.data.cutT) - MIN_CROPPER_DIS - CUT_B
+        if (CUT_B + dragLengthY + MIN_CROPPER_DIS_Y > this.data.cropperH - this.data.cutT) dragLengthY = (this.data.cropperH - this.data.cutT) - MIN_CROPPER_DIS_Y - CUT_B
         if (CUT_R + dragLengthX < 0) dragLengthX = - CUT_R
-        if (CUT_R + dragLengthX + MIN_CROPPER_DIS > this.data.cropperW - this.data.cutL) dragLengthX = (this.data.cropperW - this.data.cutL) - MIN_CROPPER_DIS - CUT_R
+        if (CUT_R + dragLengthX + MIN_CROPPER_DIS_X > this.data.cropperW - this.data.cutL) dragLengthX = (this.data.cropperW - this.data.cutL) - MIN_CROPPER_DIS_X - CUT_R
 
         if (CROPPER_AREA_RATIO) {
           // right 线的限制 不允许超出

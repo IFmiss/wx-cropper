@@ -15,7 +15,7 @@ Page {
   left: 0;
   right: 0;
   bottom: 0;
-  display: block;
+  display: flex;
   align-items: center;
   flex-direction: column;
   background: #000;
@@ -24,8 +24,8 @@ Page {
   min-height: calc(20%);
   width: 720rpx;
   margin: 0 auto;
-  margin-top: 8rpx;
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
 }
 .wx-content-info .cropper-content .wx-corpper {
@@ -316,12 +316,9 @@ Page {
   cursor: n-resize;
 }
 .wx-content-info .cropper-config {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80rpx;
   display: flex;
+  flex: 0 0 80rpx;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid rgba(255, 255, 255, 0.12);

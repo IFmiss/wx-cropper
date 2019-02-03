@@ -107,6 +107,9 @@ Component({
       }
 
       this.conf = {
+        // 图片比例
+        IMG_RATIO: null,
+
         // 图片实际宽高
         IMG_REAL_W: null,   // 图片实际的宽度
         IMG_REAL_H: null,   // 图片实际的高度
@@ -139,8 +142,18 @@ Component({
      */
     loadImage () {
       const _this = this
+
       wx.showLoading({
-        
+        title: '图片加载中...',
+      })
+
+      wx.getImageInfo({
+        src: this.properties.imageSrc,
+        success: function (res) {
+          this.conf.DRAW_IMAGE_W = this.conf.IMG_REAL_W = res.windowWidth
+          this.conf.IMG_REAL_H = res.height
+          this.conf.Img
+        } 
       })
     }
   },
