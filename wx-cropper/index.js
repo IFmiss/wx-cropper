@@ -15,7 +15,7 @@ const CROPPER_RATIO = 0.7
  * 比例为宽高比 建议区间为 0.25 - 4
  * 设置为0的时候则是不固定宽高
  */
-const CROPPER_AREA_RATIO = 0
+const CROPPER_AREA_RATIO = 1
 
 // 裁剪的位置
 let CUT_L,  // 初始化拖拽元素的left值

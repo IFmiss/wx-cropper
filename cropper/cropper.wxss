@@ -16,7 +16,7 @@ Page {
   left: 0;
   right: 0;
   bottom: 0;
-  display: block;
+  display: flex;
   align-items: center;
   flex-direction: column;
   background: #000;
@@ -28,6 +28,7 @@ Page {
   margin-top: 8rpx;
   display: flex;
   align-items: center;
+  flex: 1 1 auto;
 }
 .wx-content-info .cropper-content .wx-corpper {
   position: relative;
@@ -316,11 +317,13 @@ Page {
   cursor: n-resize;
 }
 .wx-content-info .cropper-config {
-  position: fixed;
+  /* position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 80rpx;
+  height: 80rpx; */
+  flex: 0 0 80rpx;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -331,6 +334,7 @@ Page {
   color: #fff;
   font-size: 26rpx;
   padding: 15rpx 25px;
+  display: block;
 }
 /* 裁剪框预览内容 */
 .wx-cropper-viewer {

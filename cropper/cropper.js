@@ -62,9 +62,6 @@ Component({
     cropperW: null,
     cropperH: null,
 
-    // 动态的left top值
-    cropperL: 0,
-    cropperT: 0,
     // 图片缩放值
     scaleP: 0,
     // 裁剪框 宽高
@@ -82,6 +79,7 @@ Component({
    */
   methods: {
     close () {
+      wx.hideLoading()
       this.triggerEvent('close')
     },
 
@@ -138,6 +136,23 @@ Component({
     },
 
     /**
+     * 选择本地图片
+     * 基于底部中间的按钮的点击事件
+     */
+    getImage: function () {
+      const _this = this
+      wx.chooseImage({
+        success: function (res) {
+          _this.setData({
+            isShowImg: false,
+            imageSrc: res.tempFilePaths[0],
+          })
+          _this.loadImage();
+        },
+      })
+    },
+
+    /**
      * 初始化加载图片
      */
     loadImage () {
@@ -146,15 +161,135 @@ Component({
       wx.showLoading({
         title: '图片加载中...',
       })
-
+      console.log(this.properties.imageSrc)
       wx.getImageInfo({
         src: this.properties.imageSrc,
         success: function (res) {
-          this.conf.DRAW_IMAGE_W = this.conf.IMG_REAL_W = res.windowWidth
-          this.conf.IMG_REAL_H = res.height
-          this.conf.Img
+          /**
+           * 获取图片真实宽高
+           * 设置DRAW_IMAGE_W
+           */
+          _this.conf.DRAW_IMAGE_W = _this.conf.IMG_REAL_W = res.width
+          _this.conf.IMG_REAL_H = res.height
+          _this.conf.IMG_RATIO = _this.conf.IMG_REAL_W / _this.conf.IMG_REAL_H
+          _this.conf.CROPPER_Height = _this.properties.cropperWidth / _this.conf.IMG_RATIO
+
+          const scaleP = _this.conf.IMG_REAL_W / _this.properties.cropperWidth
+          const qualityWidth = _this.conf.DRAW_IMAGE_W > _this.conf.MAX_QW ? _this.conf.MAX_QW : _this.conf.DRAW_IMAGE_W
+          // const MIN_RANG
+          const p = _this.initPosition()
+
+          // 根据图片的宽高显示不同的效果 保证图片可以正常显示 (横屏)
+          if (_this.conf.IMG_RATIO >= 1) {
+            _this.setData ({
+              cropperW: _this.properties.cropperWidth,
+              cropperH: _this.conf.CROPPER_Height,
+
+              // 初始化left right
+              cutL: p.left,
+              cutT: p.top,
+              cutR: p.right,
+              cutB: p.bottom,
+
+              // 图片缩放值
+              scaleP,
+              qualityWidth
+            })
+          } else {
+            // 此时需要判断图片的比例以设定显示裁剪区域的比例
+            // let cropper_real_ratio = CROPPER_RATIO > IMG_RATIO ? CROPPER_RATIO : IMG_RATIO
+
+            // if (CROPPER_RATIO > IMG_RATIO) {
+            //   CROPPER_IMG_W = CROPPER_WIDTH / CROPPER_RATIO * IMG_RATIO
+            //   CROPPER_IMG_H = CROPPER_WIDTH / CROPPER_RATIO
+            // } else {
+            //   CROPPER_IMG_W = CROPPER_WIDTH
+            //   CROPPER_IMG_H = CROPPER_IMG_W / IMG_RATIO
+            // }
+
+            // 竖屏初始化
+            _this.setData ({
+              cropperW: _this.properties.cropperWidth,
+              cropperH: _this.conf.CROPPER_Height,
+
+              // 初始化left right
+              cutL: p.left,
+              cutT: p.top,
+              cutR: p.right,
+              cutB: p.bottom,
+
+              // 图片缩放值
+              scaleP,
+              qualityWidth
+            })
+          }
+
+          _this.setData({
+            showImg: true
+          })
+          wx.hideLoading()
         } 
       })
+    },
+
+    /**
+     * 初始化裁剪位置
+     * 需要 cutRatio 来判断
+     * @return 返回裁剪的left, right, top bottom的值
+     */
+    initPosition () {
+      // 定义返回的对象
+      let left = 0,
+          right = 0,
+          top = 0,
+          bottom = 0,
+          cropperW,
+          cropperH
+      // cutRatio为0 则为不等比裁剪
+      if (this.properties.cutRatio === 0) return { left, right, top, bottom }
+
+      // 定义差值比例
+      const absReducerRadio = Math.abs(this.conf.IMG_RATIO - this.properties.cutRatio)
+
+      // 如果图片宽度大于等于高度（横向）
+      if (this.conf.IMG_RATIO >= 1) {
+        // 图片显示区域比裁剪比例大的时候
+        if (this.conf.IMG_RATIO > this.properties.cutRatio) {
+          // left的值
+          let leftRight = Math.ceil((this.properties.cropperWidth * absReducerRadio) / 2)
+          return {
+            left: leftRight,
+            right: leftRight,
+            top: 0,
+            left: 0
+          }
+        }
+        // 否则
+        let bottomTop = Math.ceil((this.conf.CROPPER_Height  * absReducerRadio) / 2)
+        return {
+          left: 0,
+          right: 0,
+          top: bottomTop,
+          left: bottomTop
+        }
+      }
+
+      // 如果图片宽度小于高度 (竖向)
+      let getXorY = Math.ceil((this.conf.CROPPER_Height  * absReducerRadio) / 2)
+      if (this.conf.IMG_RATIO > this.properties.cutRatio) {
+        return {
+          left: getXorY,
+          right: getXorY,
+          top: 0,
+          left: 0
+        }
+      }
+      return {
+        left: 0,
+        right: 0,
+        top: getXorY,
+        left: getXorY
+      }
     }
   },
   
@@ -167,7 +302,7 @@ Component({
 
   attached: function () {
     console.log('attached')
-    this.loadImage()
+    // this.loadImage()
   },
 
   ready: function () {
