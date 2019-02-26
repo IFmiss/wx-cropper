@@ -23,7 +23,7 @@ Component({
      */
     cutRatio: {
       type: Number,
-      value: 0
+      value: 0.5
     },
 
     /**
@@ -242,9 +242,7 @@ Component({
       let left = 0,
           right = 0,
           top = 0,
-          bottom = 0,
-          cropperW,
-          cropperH
+          bottom = 0
       // cutRatio为0 则为不等比裁剪
       if (this.properties.cutRatio === 0) return { left, right, top, bottom }
 
@@ -253,42 +251,44 @@ Component({
 
       // 如果图片宽度大于等于高度（横向）
       if (this.conf.IMG_RATIO >= 1) {
+        // 获取基本宽度
         // 图片显示区域比裁剪比例大的时候
-        if (this.conf.IMG_RATIO > this.properties.cutRatio) {
+        if (this.conf.IMG_RATIO >= this.properties.cutRatio) {
           // left的值
-          let leftRight = Math.ceil((this.properties.cropperWidth * absReducerRadio) / 2)
+          let leftRight = Math.ceil((this.properties.cropperWidth - (this.conf.CROPPER_Height * this.properties.cutRatio)) / 2)
           return {
             left: leftRight,
             right: leftRight,
             top: 0,
-            left: 0
+            bottom: 0
           }
         }
         // 否则
-        let bottomTop = Math.ceil((this.conf.CROPPER_Height  * absReducerRadio) / 2)
+        const bottomTop = Math.ceil((this.conf.CROPPER_Height  - (this.properties.cropperWidth / this.properties.cutRatio)) / 2)
         return {
           left: 0,
           right: 0,
           top: bottomTop,
-          left: bottomTop
+          bottom: bottomTop
         }
       }
 
       // 如果图片宽度小于高度 (竖向)
-      let getXorY = Math.ceil((this.conf.CROPPER_Height  * absReducerRadio) / 2)
-      if (this.conf.IMG_RATIO > this.properties.cutRatio) {
+      if (this.conf.IMG_RATIO >= this.properties.cutRatio) {
+        const leftRight = Math.ceil((this.properties.cropperWidth - (this.conf.CROPPER_Height * this.properties.cutRatio)) / 2)
         return {
-          left: getXorY,
-          right: getXorY,
+          left: leftRight,
+          right: leftRight,
           top: 0,
-          left: 0
+          bottom: 0
         }
       }
+      const bottomTop = Math.ceil((this.conf.CROPPER_Height  - (this.properties.cropperWidth / this.properties.cutRatio)) / 2)
       return {
         left: 0,
         right: 0,
-        top: getXorY,
-        left: getXorY
+        top: bottomTop,
+        bottom: bottomTop
       }
     }
   },
