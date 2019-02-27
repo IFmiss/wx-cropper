@@ -11,7 +11,7 @@ Component({
      */
     cropperRatio: {
       type: Number,
-      value: 0.6667
+      value: 1
     },
 
     /**
@@ -23,7 +23,7 @@ Component({
      */
     cutRatio: {
       type: Number,
-      value: 0.5
+      value: 1
     },
 
     /**
@@ -112,6 +112,10 @@ Component({
         IMG_REAL_W: null,   // 图片实际的宽度
         IMG_REAL_H: null,   // 图片实际的高度
 
+        // 裁剪除黑色区域以内的高度
+        CROPPER_HEIGHT: null,
+        CROPPER_WIDTH: null,
+
         // 裁剪图片区域的信息
         CROPPER_IMG_W: null,    // 也就是 data.cropperW
         CROPPER_IMG_H: null,    // 也就是 data.cropperH
@@ -172,7 +176,7 @@ Component({
           _this.conf.DRAW_IMAGE_W = _this.conf.IMG_REAL_W = res.width
           _this.conf.IMG_REAL_H = res.height
           _this.conf.IMG_RATIO = _this.conf.IMG_REAL_W / _this.conf.IMG_REAL_H
-          _this.conf.CROPPER_Height = _this.properties.cropperWidth / _this.conf.IMG_RATIO
+          _this.conf.CROPPER_HEIGHT = _this.properties.cropperWidth / _this.conf.IMG_RATIO
 
           const scaleP = _this.conf.IMG_REAL_W / _this.properties.cropperWidth
           const qualityWidth = _this.conf.DRAW_IMAGE_W > _this.conf.MAX_QW ? _this.conf.MAX_QW : _this.conf.DRAW_IMAGE_W
@@ -183,7 +187,7 @@ Component({
           if (_this.conf.IMG_RATIO >= 1) {
             _this.setData ({
               cropperW: _this.properties.cropperWidth,
-              cropperH: _this.conf.CROPPER_Height,
+              cropperH: _this.conf.CROPPER_HEIGHT,
 
               // 初始化left right
               cutL: p.left,
@@ -206,11 +210,10 @@ Component({
             //   CROPPER_IMG_W = CROPPER_WIDTH
             //   CROPPER_IMG_H = CROPPER_IMG_W / IMG_RATIO
             // }
-
             // 竖屏初始化
             _this.setData ({
-              cropperW: _this.properties.cropperWidth,
-              cropperH: _this.conf.CROPPER_Height,
+              cropperW: _this.conf.CROPPER_WIDTH,
+              cropperH: _this.conf.CROPPER_HEIGHT,
 
               // 初始化left right
               cutL: p.left,
@@ -255,7 +258,7 @@ Component({
         // 图片显示区域比裁剪比例大的时候
         if (this.conf.IMG_RATIO >= this.properties.cutRatio) {
           // left的值
-          let leftRight = Math.ceil((this.properties.cropperWidth - (this.conf.CROPPER_Height * this.properties.cutRatio)) / 2)
+          let leftRight = Math.ceil((this.properties.cropperWidth - (this.conf.CROPPER_HEIGHT * this.properties.cutRatio)) / 2)
           return {
             left: leftRight,
             right: leftRight,
@@ -264,7 +267,7 @@ Component({
           }
         }
         // 否则
-        const bottomTop = Math.ceil((this.conf.CROPPER_Height  - (this.properties.cropperWidth / this.properties.cutRatio)) / 2)
+        const bottomTop = Math.ceil((this.conf.CROPPER_HEIGHT  - (this.properties.cropperWidth / this.properties.cutRatio)) / 2)
         return {
           left: 0,
           right: 0,
@@ -274,8 +277,16 @@ Component({
       }
 
       // 如果图片宽度小于高度 (竖向)
+      // const r = _this.properties.cropperRatio > _this.conf.IMG_RATIO ? _this.properties.cropperRatio : _this.conf.IMG_RATIO
+      if (this.properties.cropperRatio > this.conf.IMG_RATIO) {
+        this.conf.CROPPER_WIDTH = this.properties.cropperWidth / this.properties.cropperRatio * this.conf.IMG_RATIO
+        this.conf.CROPPER_HEIGHT = this.properties.cropperWidth / this.properties.cropperRatio
+      } else {
+        this.conf.CROPPER_WIDTH = this.properties.cropperWidth
+        this.conf.CROPPER_HEIGHT = this.properties.cropperWidth / this.conf.IMG_RATIO
+      }
       if (this.conf.IMG_RATIO >= this.properties.cutRatio) {
-        const leftRight = Math.ceil((this.properties.cropperWidth - (this.conf.CROPPER_Height * this.properties.cutRatio)) / 2)
+        const leftRight = Math.ceil((this.conf.CROPPER_WIDTH - (this.conf.CROPPER_HEIGHT * this.properties.cutRatio)) / 2)
         return {
           left: leftRight,
           right: leftRight,
@@ -283,7 +294,7 @@ Component({
           bottom: 0
         }
       }
-      const bottomTop = Math.ceil((this.conf.CROPPER_Height  - (this.properties.cropperWidth / this.properties.cutRatio)) / 2)
+      const bottomTop = Math.ceil((this.conf.CROPPER_HEIGHT  - (this.conf.CROPPER_WIDTH / this.properties.cutRatio)) / 2)
       return {
         left: 0,
         right: 0,
