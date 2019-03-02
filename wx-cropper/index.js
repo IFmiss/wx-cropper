@@ -8,11 +8,11 @@
 const CROPPER_WIDTH = 720
 
 // 裁剪显示的最大比例，如果裁剪的图片过长，则做限制，默认最大宽高比例为 宽640 / 高960 (宽高比例)
-const CROPPER_RATIO = 0.8
+const CROPPER_RATIO = 0.7
 
 /**
  * 初始化裁剪的比例 如果是正方形则是 1
- * 比例为宽高比 区间为 0.25 - 4
+ * 比例为宽高比 建议区间为 0.25 - 4
  * 设置为0的时候则是不固定宽高
  */
 const CROPPER_AREA_RATIO = 1
@@ -32,8 +32,6 @@ let CUT_L,  // 初始化拖拽元素的left值
     PAGE_Y, // 手按下y的位置
     T_PAGE_X, // 手移动的时候x的位置
     T_PAGE_Y, // 手移动的时候Y的位置x
-
-    PR = wx.getSystemInfoSync().pixelRatio, // dpi
 
 // 图片比例
     IMG_RATIO,
@@ -74,7 +72,7 @@ Page({
   data: {
     // 之后可以动态替换
     // imageSrc: 'http://www.bing.com/az/hprichbg/rb/BulgariaPerseids_ZH-CN11638911564_1920x1080.jpg',
-    imageSrc: 'http://pic.ffpic.com/files/2014/0331/0331dytqcazsjbz9.jpg',
+    imageSrc: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1548138965392&di=8d000139a867a92e7552f6d70ab88c09&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201809%2F22%2F20180922160044_lxqwl.thumb.700_0.jpg',
     // imageSrc: 'http://pic.shejiben.com/mall/2013/10/25/20131025235159-933db4b4_m.jpg',
     // 是否显示图片(在图片加载完成之后设置为true)
     isShowImg: false,
@@ -239,7 +237,7 @@ Page({
     // 如果 CROPPER_AREA_RATIO = 0 则不限制固定宽高 
     if (CROPPER_AREA_RATIO === 0) return { left, right, top,bottom }
 
-    // 宽大于高
+    // 宽大于等于高
     if (radio >= 1) {
       cropperW = CROPPER_WIDTH
       cropperH = CROPPER_WIDTH / IMG_RATIO
@@ -257,29 +255,27 @@ Page({
         top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
         bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
       }
-    } else {
-      // 此时需要判断图片的比例以设定显示裁剪区域的比例
-      let cropper_real_ratio = CROPPER_RATIO > IMG_RATIO ? CROPPER_RATIO : IMG_RATIO
-      // 高大于宽
-      cropperW = CROPPER_WIDTH / cropper_real_ratio * IMG_RATIO
-      cropperH = CROPPER_WIDTH / cropper_real_ratio
-      if (radio < CROPPER_AREA_RATIO) {
-        return {
-          left: 0,
-          right: 0,
-          top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
-          bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
-        }
-      }
-      return {
-        left: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
-        right: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
-        top: 0,
-        bottom: 0
-      }
     }
 
-    return 1
+    // 此时需要判断图片的比例以设定显示裁剪区域的比例
+    let cropper_real_ratio = CROPPER_RATIO > IMG_RATIO ? CROPPER_RATIO : IMG_RATIO
+    // 高大于宽
+    cropperW = CROPPER_WIDTH / cropper_real_ratio * IMG_RATIO
+    cropperH = CROPPER_WIDTH / cropper_real_ratio
+    if (radio < CROPPER_AREA_RATIO) {
+      return {
+        left: 0,
+        right: 0,
+        top: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2),
+        bottom: Math.ceil((cropperH - cropperW / CROPPER_AREA_RATIO) / 2)
+      }
+    }
+    return {
+      left: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
+      right: Math.ceil((cropperW - cropperH * CROPPER_AREA_RATIO) / 2),
+      top: 0,
+      bottom: 0
+    }
   },
 
   /**
@@ -296,15 +292,7 @@ Page({
   contentMoveing(e) {
     var _this = this
     var dragLengthX = (PAGE_X - e.touches[0].pageX) * DRAFG_MOVE_RATIO
-    var dragLengthY = (PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO
-
-    /**
-     * 这里有一个小的问题
-     * 移动裁剪框 ios下 x方向没有移动的差距
-     * y方向手指移动的距离远大于实际裁剪框移动的距离
-     * 但是在有些机型上又是没有问题的，小米4测试没有上下移动产生的偏差，模拟器ok，但是iphone8p确实是有的，虽然模拟器也ok
-     * 小伙伴有兴趣可以找找原因
-     */
+    var dragLengthY = (PAGE_Y - e.touches[0].pageY) * DRAFG_MOVE_RATIO * DRAFG_MOVE_RATIO
 
     // 左移右移
     if (dragLengthX > 0) {
@@ -327,10 +315,6 @@ Page({
       cutB: this.data.cutB + dragLengthY
     })
 
-    // console.log('cutL', this.data.cutL)
-    // console.log('cutT', this.data.cutT)
-    // console.log('cutR', this.data.cutR)
-    // console.log('cutB', this.data.cutB)
 
     PAGE_X = e.touches[0].pageX
     PAGE_Y = e.touches[0].pageY
@@ -421,9 +405,8 @@ Page({
         if (CROPPER_AREA_RATIO) {
           // 底部线的限制 不允许超出
           // dragLength 最大不能超过CUT_B
-          if (CUT_B + dragLength / CROPPER_AREA_RATIO < 0) {
+          if (CUT_B + dragLength / CROPPER_AREA_RATIO <= 0) {
             this.setData({
-              cutR: CUT_R - CUT_B / CROPPER_AREA_RATIO,
               cutB: 0
             })
             return
@@ -449,7 +432,6 @@ Page({
           // dragLength 最大不能超过CUT_T
           if (CUT_T - dragLength / CROPPER_AREA_RATIO < 0) {
             this.setData({
-              cutL: CUT_L - CUT_T,
               cutT: 0
             })
             return
@@ -474,8 +456,7 @@ Page({
           // dragLength 最大不能超过CUT_L
           if (CUT_L - dragLength * CROPPER_AREA_RATIO < 0) {
             this.setData({
-              cutL: 0,
-              cutT: CUT_T - CUT_L
+              cutL: 0
             })
             return
           }
@@ -499,8 +480,7 @@ Page({
           // dragLength 最大不能超过 CUT_R
           if (CUT_R + dragLength * CROPPER_AREA_RATIO < 0) {
             this.setData({
-              cutR: 0,
-              cutB: CUT_B - CUT_R
+              cutR: 0
             })
             return
           }
@@ -528,8 +508,7 @@ Page({
           // dragLength 最大不能超过 CUT_R
           if (CUT_R + dragLengthY * CROPPER_AREA_RATIO < 0) {
             this.setData({
-              cutR: 0,
-              cutB: CUT_B - CUT_R
+              cutR: 0
             })
             return
           }
