@@ -4,21 +4,21 @@
     <view wx:if="{{showImg}}" class="wx-corpper" style="background:#000;">
       <view class="wx-corpper-content" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx;">
         <image src="{{imageSrc}}" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx"></image>
-        <view class="wx-corpper-crop-box" bindtouchstart="contentStartMove" bindtouchmove="contentMoveing" bindtouchend="contentTouchEnd" style="left:{{cutL}}rpx;top:{{cutT}}rpx;right:{{cutR}}rpx;bottom:{{cutB}}rpx">
+        <view class="wx-corpper-crop-box" bindtouchstart="contentDragStart" bindtouchmove="contentDragMove" bindtouchend="contentTouchEnd" style="left:{{cutL}}rpx;top:{{cutT}}rpx;right:{{cutR}}rpx;bottom:{{cutB}}rpx">
           <view class="wx-cropper-view-box">
             <view class="wx-cropper-dashed-h"></view>
             <view class="wx-cropper-dashed-v"></view>
-            <view class="wx-cropper-line-t" data-drag="top" catchtouchstart="dragStart" catchtouchmove="dragMove"></view>
-            <view class="wx-cropper-line-r" data-drag="right" catchtouchstart="dragStart" catchtouchmove="dragMove"></view>
-            <view class="wx-cropper-line-b" data-drag="bottom" catchtouchstart="dragStart" catchtouchmove="dragMove"></view>
-            <view class="wx-cropper-line-l" data-drag="left" catchtouchstart="dragStart" catchtouchmove="dragMove"></view>
-            <view class="wx-cropper-point point-t" data-drag="top" catchtouchstart="dragStart" catchtouchmove="dragMove"></view>
+            <view class="wx-cropper-line-t" data-drag="top" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove"></view>
+            <view class="wx-cropper-line-r" data-drag="right" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove"></view>
+            <view class="wx-cropper-line-b" data-drag="bottom" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove"></view>
+            <view class="wx-cropper-line-l" data-drag="left" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove"></view>
+            <view class="wx-cropper-point point-t" data-drag="top" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove"></view>
             <view class="wx-cropper-point point-tr" data-drag="topTight"></view>
-            <view class="wx-cropper-point point-r" data-drag="right" catchtouchstart="dragStart" catchtouchmove="dragMove"></view>
-            <view class="wx-cropper-point point-rb" data-drag="rightBottom" catchtouchstart="dragStart" catchtouchmove="dragMove"></view>
-            <view class="wx-cropper-point point-b" data-drag="bottom" catchtouchstart="dragStart" catchtouchmove="dragMove" catchtouchend="dragEnd"></view>
+            <view class="wx-cropper-point point-r" data-drag="right" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove"></view>
+            <view class="wx-cropper-point point-rb" data-drag="rightBottom" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove"></view>
+            <view class="wx-cropper-point point-b" data-drag="bottom" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove" catchtouchend="dragEnd"></view>
             <view class="wx-cropper-point point-bl" data-drag="bottomLeft"></view>
-            <view class="wx-cropper-point point-l" data-drag="left" catchtouchstart="dragStart" catchtouchmove="dragMove"></view>
+            <view class="wx-cropper-point point-l" data-drag="left" catchtouchstart="sideDragStart" catchtouchmove="sideDragMove"></view>
             <view class="wx-cropper-point point-lt" data-drag="leftTop"></view>
           </view>
         </view>

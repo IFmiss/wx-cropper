@@ -96,6 +96,8 @@ Component({
         CUT_W: null,  // 初始化拖拽元素的宽度
         CUT_H: null,  // 初始化拖拽元素的高度
 
+        IS_TOUCH_CONTENT: false,  // 是否是可拖动的状态（拖拽裁剪框）
+
         // 拖拽相关
         TOUCH_PAGE_X: null, // 手按下的x位置
         TOUCH_PAGE_Y: null, // 手按下y的位置
@@ -121,7 +123,7 @@ Component({
         CROPPER_IMG_H: null,    // 也就是 data.cropperH
 
         // 移动的比例
-        DRAFG_MOVE_RATIO: 750 / wx.getSystemInfoSync().windowWidth,  //移动时候的比例,
+        DRAG_MOVE_RATIO: 750 / wx.getSystemInfoSync().windowWidth,  //移动时候的比例,
 
         INIT_DRAG_POSITION: 0,    // 初始化屏幕宽度和裁剪区域的宽度之差，用于设置初始化裁剪的宽度
         DRAW_IMAGE_W: null,       // 设置生成的图片宽度
@@ -200,16 +202,6 @@ Component({
               qualityWidth
             })
           } else {
-            // 此时需要判断图片的比例以设定显示裁剪区域的比例
-            // let cropper_real_ratio = CROPPER_RATIO > IMG_RATIO ? CROPPER_RATIO : IMG_RATIO
-
-            // if (CROPPER_RATIO > IMG_RATIO) {
-            //   CROPPER_IMG_W = CROPPER_WIDTH / CROPPER_RATIO * IMG_RATIO
-            //   CROPPER_IMG_H = CROPPER_WIDTH / CROPPER_RATIO
-            // } else {
-            //   CROPPER_IMG_W = CROPPER_WIDTH
-            //   CROPPER_IMG_H = CROPPER_IMG_W / IMG_RATIO
-            // }
             // 竖屏初始化
             _this.setData ({
               cropperW: _this.conf.CROPPER_WIDTH,
@@ -301,6 +293,52 @@ Component({
         top: bottomTop,
         bottom: bottomTop
       }
+    },
+
+    /**
+     * 上下左右四条线的拖拽效果
+     */
+    sideDragStart () {
+    },
+
+    /**
+     * 裁剪框的拖动事件
+     */
+    contentDragStart (e) {
+      this.drag.IS_TOUCH_CONTENT = true
+      this.drag.TOUCH_PAGE_X = e.touches[0].pageX
+      this.drag.TOUCH_PAGE_X = e.touches[0].pageY
+    },
+
+    /**
+     * 裁剪框拖动
+     */
+    contentDragMove (e) {
+      const _this = this
+      var dragLengthX = (this.drag.TOUCH_PAGE_X - e.touches[0].pageX) * this.conf.DRAG_MOVE_RATIO
+      var dragLengthY = (this.drag.TOUCH_PAGE_Y - e.touches[0].pageY) * this.conf.DRAG_MOVE_RATIO
+      console.log('this.drag.TOUCH_PAGE_X', this.drag.TOUCH_PAGE_X)
+      console.log('e.touches[0].pageX', e.touches[0].pageX)
+      console.log('this.conf.DRAG_MOVE_RATIO', this.conf.DRAG_MOVE_RATIO)
+      console.log('dragLengthX', dragLengthX)
+      console.log('this.data.cutL', this.data.cutL)
+      // console.log('dragLengthY', dragLengthY)
+      // 左移右移
+      // 左移
+      if (dragLengthX > 0) {
+        if (this.data.cutL - dragLengthX < 0) dragLengthX = this.data.cutL
+      } else {
+        if (this.data.cutR + dragLengthX < 0) dragLengthX = -this.data.cutR
+      }
+
+      this.setData({
+        cutL: this.data.cutL - dragLengthX,
+        // cutT: this.data.cutT - dragLengthY,
+        cutR: this.data.cutR + dragLengthX,
+        // cutB: this.data.cutB + dragLengthY
+      })
+      this.drag.TOUCH_PAGE_X = e.touches[0].pageX
+      this.drag.TOUCH_PAGE_Y = e.touches[0].pageY
     }
   },
   
