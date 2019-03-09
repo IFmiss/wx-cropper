@@ -98,9 +98,12 @@ Component({
 
         IS_TOUCH_CONTENT: false,  // 是否是可拖动的状态（拖拽裁剪框）
 
-        // 拖拽相关
-        TOUCH_PAGE_X: null, // 手按下的x位置
-        TOUCH_PAGE_Y: null, // 手按下y的位置
+        // 拖拽区域的时候设置
+        TOUCH_OFFSET_X: null, // 手按下相对于裁剪框左边的距离
+        TOUCH_OFFSET_Y: null, // 手按下相对于裁剪框上边的距离
+
+        TOUCH_MAX_MOVE_SECTION_X: null, // 移动区域的时候移动的x方向最大区间
+        TOUCH_MAX_MOVE_SECTION_Y: null, // 移动区域的时候移动的y方向最大区间
 
         MOVE_PAGE_X: null,  // 手移动的时候x的位置
         MOVE_PAGE_Y: null,  // 手移动的时候Y的位置
@@ -306,39 +309,52 @@ Component({
      */
     contentDragStart (e) {
       this.drag.IS_TOUCH_CONTENT = true
-      this.drag.TOUCH_PAGE_X = e.touches[0].pageX
-      this.drag.TOUCH_PAGE_X = e.touches[0].pageY
+
+      this.drag.TOUCH_OFFSET_X = e.touches[0].pageX - this.data.cutL
+      this.drag.TOUCH_OFFSET_Y = e.touches[0].pageY - this.data.cutT
+
+      /**
+       * 获取可移动的最大值 xy方向
+       */
+      const cc = this.cropperCurrentInfo()
+      this.drag.TOUCH_MAX_MOVE_SECTION_X = cc.x
+      this.drag.TOUCH_MAX_MOVE_SECTION_Y = cc.y
+    },
+
+    /**
+     * 获取裁剪区域信息
+     */
+    cropperCurrentInfo () {
+      const x = this.data.cutL + this.data.cutR
+      const y = this.data.cutT + this.data.cutB
+
+      // 获取拖拽元素的宽高
+      this.drag.CUT_W = this.data.cropperW - x
+      this.drag.CUT_H = this.data.cropperH - y
+
+      // 返回x, y
+      return {
+        x,
+        y
+      }
     },
 
     /**
      * 裁剪框拖动
      */
     contentDragMove (e) {
-      const _this = this
-      var dragLengthX = (this.drag.TOUCH_PAGE_X - e.touches[0].pageX) * this.conf.DRAG_MOVE_RATIO
-      var dragLengthY = (this.drag.TOUCH_PAGE_Y - e.touches[0].pageY) * this.conf.DRAG_MOVE_RATIO
-      console.log('this.drag.TOUCH_PAGE_X', this.drag.TOUCH_PAGE_X)
-      console.log('e.touches[0].pageX', e.touches[0].pageX)
-      console.log('this.conf.DRAG_MOVE_RATIO', this.conf.DRAG_MOVE_RATIO)
-      console.log('dragLengthX', dragLengthX)
-      console.log('this.data.cutL', this.data.cutL)
-      // console.log('dragLengthY', dragLengthY)
-      // 左移右移
-      // 左移
-      if (dragLengthX > 0) {
-        if (this.data.cutL - dragLengthX < 0) dragLengthX = this.data.cutL
-      } else {
-        if (this.data.cutR + dragLengthX < 0) dragLengthX = -this.data.cutR
-      }
+      const MOVE_X = e.touches[0].pageX - this.drag.TOUCH_OFFSET_X
+      const MOVE_Y = e.touches[0].pageY - this.drag.TOUCH_OFFSET_Y
+
+      const drag_x = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_X, Math.max(0, MOVE_X))
+      const drag_y = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_Y, Math.max(0, MOVE_Y))
 
       this.setData({
-        cutL: this.data.cutL - dragLengthX,
-        // cutT: this.data.cutT - dragLengthY,
-        cutR: this.data.cutR + dragLengthX,
-        // cutB: this.data.cutB + dragLengthY
+        cutL: drag_x,
+        cutR: this.data.cropperW - this.drag.CUT_W - drag_x,
+        cutT: drag_y,
+        cutB: this.data.cropperH - this.drag.CUT_H - drag_y,
       })
-      this.drag.TOUCH_PAGE_X = e.touches[0].pageX
-      this.drag.TOUCH_PAGE_Y = e.touches[0].pageY
     }
   },
   
