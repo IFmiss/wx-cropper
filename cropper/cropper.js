@@ -344,17 +344,23 @@ Component({
      */
     contentDragMove (e) {
       const MOVE_X = e.touches[0].pageX - this.drag.TOUCH_OFFSET_X
-      const MOVE_Y = e.touches[0].pageY - this.drag.TOUCH_OFFSET_Y
+      const MOVE_Y = (e.touches[0].pageY - this.drag.TOUCH_OFFSET_Y)
 
       const drag_x = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_X, Math.max(0, MOVE_X))
       const drag_y = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_Y, Math.max(0, MOVE_Y))
-
+      console.log(drag_y)
+      console.log(drag_y * this.conf.DRAG_MOVE_RATIO)
+      console.log('------------------')
       this.setData({
         cutL: drag_x,
         cutR: this.data.cropperW - this.drag.CUT_W - drag_x,
         cutT: drag_y,
-        cutB: this.data.cropperH - this.drag.CUT_H - drag_y,
+        cutB: (this.data.cropperH - this.drag.CUT_H - drag_y)
       })
+
+      // 需要初始化
+      this.drag.TOUCH_OFFSET_X = e.touches[0].pageX - this.data.cutL
+      this.drag.TOUCH_OFFSET_Y = e.touches[0].pageY - this.data.cutT
     }
   },
   
