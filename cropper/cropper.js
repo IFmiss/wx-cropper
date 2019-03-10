@@ -343,14 +343,13 @@ Component({
      * 裁剪框拖动
      */
     contentDragMove (e) {
+      if (!this.drag.IS_TOUCH_CONTENT) return
       const MOVE_X = e.touches[0].pageX - this.drag.TOUCH_OFFSET_X
       const MOVE_Y = (e.touches[0].pageY - this.drag.TOUCH_OFFSET_Y)
 
       const drag_x = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_X, Math.max(0, MOVE_X))
       const drag_y = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_Y, Math.max(0, MOVE_Y))
-      console.log(drag_y)
-      console.log(drag_y * this.conf.DRAG_MOVE_RATIO)
-      console.log('------------------')
+
       this.setData({
         cutL: drag_x,
         cutR: this.data.cropperW - this.drag.CUT_W - drag_x,
@@ -362,6 +361,45 @@ Component({
       this.drag.TOUCH_OFFSET_X = e.touches[0].pageX - this.data.cutL
       this.drag.TOUCH_OFFSET_Y = e.touches[0].pageY - this.data.cutT
     }
+  },
+
+  /**
+   * 裁剪框拖动结束
+   */
+  contentTouchEnd () {
+    this.drag.IS_TOUCH_CONTENT = false
+  },
+
+  /**
+   * 裁剪框4个方向的拖拽
+   */
+  sideDragStart (e) {
+    this.drag.MOVE_PAGE_X = e.touches[0].pageX
+    this.drag.MOVE_PAGE_Y = e.touches[0].pageY
+  },
+  
+  /**
+   *  拖拽中
+   */
+  sideDragMove (e) {
+    const type = e.target.dataset.drag
+    if (this.properties.cutRatio === 0) {
+      this.sideDragMoveDefault(e, type)
+    } else {
+      this.sideDragMoveConst(e, type)
+    }
+  },
+
+  /**
+   * 开始拖拽
+   * 等比例的拖拽方式
+   */
+  sideDragMoveConst (e, type) {
+  },
+
+  sideDragMoveDefault (e, type) {
+    // const dragLength = (this.drag.MOVE_PAGE_X - e.touches[0].pageX) * this.conf.DRAG_MOVE_RATIO
+    // if (this.drag.CUT_L > dragLength) dragLength = this.drag.CUT_L
   },
   
   created: function () {
