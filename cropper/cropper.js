@@ -23,7 +23,7 @@ Component({
      */
     cutRatio: {
       type: Number,
-      value: 1
+      value: 0
     },
 
     /**
@@ -189,6 +189,11 @@ Component({
           const p = _this.initPosition()
 
           // 根据图片的宽高显示不同的效果 保证图片可以正常显示 (横屏)
+          console.log(_this.conf.IMG_RATIO)
+          console.log(_this.conf)
+          console.log(_this.drag)
+          console.log(_this.data)
+          console.log(p)
           if (_this.conf.IMG_RATIO >= 1) {
             _this.setData ({
               cropperW: _this.properties.cropperWidth,
@@ -241,11 +246,10 @@ Component({
           right = 0,
           top = 0,
           bottom = 0
-      // cutRatio为0 则为不等比裁剪
-      if (this.properties.cutRatio === 0) return { left, right, top, bottom }
-
-      // 定义差值比例
-      const absReducerRadio = Math.abs(this.conf.IMG_RATIO - this.properties.cutRatio)
+      // cutRatio为0 且为横行  则为不等比裁剪
+      if (this.properties.cutRatio === 0 && this.conf.IMG_RATIO >= 1) {
+        return { left, right, top, bottom }
+      }
 
       // 如果图片宽度大于等于高度（横向）
       if (this.conf.IMG_RATIO >= 1) {
@@ -280,8 +284,12 @@ Component({
         this.conf.CROPPER_WIDTH = this.properties.cropperWidth
         this.conf.CROPPER_HEIGHT = this.properties.cropperWidth / this.conf.IMG_RATIO
       }
+      // 定义四个位置  如果不比例裁剪
+      if (this.properties.cutRatio === 0) return { left, right, top, bottom }
+      // 否则
+
       if (this.conf.IMG_RATIO >= this.properties.cutRatio) {
-        const leftRight = Math.ceil((this.conf.CROPPER_WIDTH - (this.conf.CROPPER_HEIGHT * this.properties.cutRatio)) / 2)
+        let leftRight = Math.ceil((this.conf.CROPPER_WIDTH - (this.conf.CROPPER_HEIGHT * this.properties.cutRatio)) / 2)
         return {
           left: leftRight,
           right: leftRight,
@@ -374,6 +382,7 @@ Component({
    * 裁剪框4个方向的拖拽
    */
   sideDragStart (e) {
+    console.log(e)
     this.drag.MOVE_PAGE_X = e.touches[0].pageX
     this.drag.MOVE_PAGE_Y = e.touches[0].pageY
   },
@@ -382,6 +391,7 @@ Component({
    *  拖拽中
    */
   sideDragMove (e) {
+    console.log('console.log(e)', e)
     const type = e.target.dataset.drag
     if (this.properties.cutRatio === 0) {
       this.sideDragMoveDefault(e, type)
@@ -398,8 +408,16 @@ Component({
   },
 
   sideDragMoveDefault (e, type) {
-    // const dragLength = (this.drag.MOVE_PAGE_X - e.touches[0].pageX) * this.conf.DRAG_MOVE_RATIO
-    // if (this.drag.CUT_L > dragLength) dragLength = this.drag.CUT_L
+    console.log(e)
+    switch (type) {
+      case 'top':
+        
+        break;
+      default:
+        break;
+    }
+    console.log(e)
+    console.log(type)
   },
   
   created: function () {
