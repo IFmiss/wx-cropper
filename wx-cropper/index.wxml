@@ -33,7 +33,7 @@
   <canvas canvas-id="myCanvas" style="position:absolute;border: 1px solid red; width:{{qualityWidth}}px;height:{{qualityWidth/innerAspectRadio}}px;top:-9999px;left:-9999px;"></canvas>
 </view> -->
 <button bindtap="showCut">
-  点击显示裁剪模块
+  点击显示裁剪模块 {{showCropper}}
 </button>
 <view class="" hover-class="none" hover-stop-propagation="false">
   <my-cropper bind:close="hideCut" wx:if="{{showCropper}}" imageSrc="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1548138965392&di=8d000139a867a92e7552f6d70ab88c09&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201809%2F22%2F20180922160044_lxqwl.thumb.700_0.jpg"/>

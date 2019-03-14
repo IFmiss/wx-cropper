@@ -1,5 +1,4 @@
-/* cropper/cropper.wxss */
-/* pages/wx-cropper/index.wxss */
+/* pages/cropper/cropper.wxss */
 Page {
   /* 点的颜色 */
   --primary-color: #69f;
@@ -46,7 +45,7 @@ Page {
   position: relative;
   /* 内部的信息 */
 }
-.wx-content-info .cropper-content .wx-corpper .wx-corpper-content image {
+.wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-content-bg {
   display: block;
   width: 100%;
   min-width: 0 !important;
@@ -56,12 +55,22 @@ Page {
   max-height: none !important;
   image-orientation: 0deg !important;
   margin: 0 auto;
+  position: relative;
+}
+.wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-content-bg .mask{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
 }
 .wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-crop-box {
   position: absolute;
   background: var(--box-bg);
   z-index: 2;
 }
+
 .wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-crop-box .wx-cropper-view-box {
   position: relative;
   display: block;
@@ -77,6 +86,13 @@ Page {
   /* 左下 */
   /* 左上 */
 }
+
+.wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-cropper-view-box-img {
+  position: absolute;
+  overflow: hidden;
+}
+
+
 .wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-crop-box .wx-cropper-view-box .wx-cropper-dashed-h {
   position: absolute;
   top: 33.33333333%;
