@@ -264,7 +264,8 @@ Component({
     setMinCutInfo () {
       this.conf.CUT_MIN_W = this.properties.minCropperW
       if (this.properties.cutRatio) {
-        this.conf.CUT_MIN_H = this.conf.CUT_MIN_W * this.properties.cutRatio
+        this.conf.CUT_MIN_H = this.conf.CUT_MIN_W / this.properties.cutRatio
+        console.log('this.conf.CUT_MIN_H', this.conf.CUT_MIN_H)
         return
       }
       this.conf.CUT_MIN_H = this.conf.CUT_MIN_W
@@ -420,10 +421,6 @@ Component({
       this.conf.CUT_R = this.data.cutR
       this.conf.CUT_B = this.data.cutB
 
-      console.log(this.conf.CROPPER_HEIGHT)
-      console.log(this.conf.CUT_T)
-      console.log(this.conf.CUT_MIN_H)
-
       // 初始化最大移动区域
       this.drag.SPACE_TOP_POSITION = this.conf.CROPPER_HEIGHT - this.conf.CUT_B - this.conf.CUT_MIN_H
       this.drag.SPACE_BOTTOM_POSITION = this.conf.CROPPER_HEIGHT - this.conf.CUT_T - this.conf.CUT_MIN_H
@@ -455,10 +452,41 @@ Component({
      * 等比例的拖拽方式
      */
     sideDragMoveConst (e, type) {
-      // const xLength = e.touches[0].pageX - this.drag.MOVE_PAGE_X
-      // const yLength = e.touches[0].pageY - this.drag.MOVE_PAGE_Y
+      const xLength = e.touches[0].pageX - this.drag.MOVE_PAGE_X
+      const yLength = e.touches[0].pageY - this.drag.MOVE_PAGE_Y
+      switch (type) {
+        case 'top':
+          let top = this.conf.CUT_T + yLength
+          top = top >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : top
+
+          let topL = this.conf.CUT_L + yLength * this.properties.cutRatio
+          topL = topL >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : topL
+
+          if (top < 0) {
+            this.setData({
+              cutT: 0
+            })
+            return
+          }
+
+          if (topL < 0) {
+            this.setData({
+              cutL: 0
+            })
+            return
+          }
+
+          this.setData({
+            cutT: top,
+            cutL: topL
+          })
+          break;
+      }
     },
 
+    /**
+     * 非等比例拖拽的操作
+     */
     sideDragMoveDefault (e, type) {
       const xLength = e.touches[0].pageX - this.drag.MOVE_PAGE_X
       const yLength = e.touches[0].pageY - this.drag.MOVE_PAGE_Y
