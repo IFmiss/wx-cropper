@@ -7,7 +7,7 @@ Page {
   /* 虚线颜色 */
   --primary-color-dashed: rgba(255, 255, 255, 0.46);
   /* 裁剪区域背景色 */
-  --box-bg: rgba(255, 255, 255, 0.3);
+  --box-bg: transparent;
 }
 .wx-content-info {
   position: fixed;

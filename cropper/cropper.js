@@ -23,7 +23,7 @@ Component({
      */
     cutRatio: {
       type: Number,
-      value: 0
+      value: 1
     },
 
     /**
@@ -462,13 +462,6 @@ Component({
           let topL = this.conf.CUT_L + yLength * this.properties.cutRatio
           topL = topL >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : topL
 
-          if (top < 0) {
-            this.setData({
-              cutT: 0
-            })
-            return
-          }
-
           if (topL < 0) {
             this.setData({
               cutL: 0
@@ -476,9 +469,94 @@ Component({
             return
           }
 
+          if (top < 0) {
+            this.setData({
+              cutT: 0
+            })
+            return
+          }
+
           this.setData({
             cutT: top,
             cutL: topL
+          })
+          break;
+        case 'left':
+          let left = this.conf.CUT_L + xLength
+          left = left >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : left
+
+          let leftB = this.conf.CUT_B + xLength / this.properties.cutRatio
+          leftB = leftB >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : leftB
+
+          if (leftB < 0) {
+            this.setData({
+              cutB: 0
+            })
+            return
+          }
+
+          if (left < 0) {
+            this.setData({
+              cutL: 0
+            })
+            return
+          }
+
+          this.setData({
+            cutL: left,
+            cutB: leftB
+          })
+          break;
+        case 'bottom':
+          let bottom = this.conf.CUT_B - yLength
+          bottom = bottom >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : bottom
+
+          let bottomR = this.conf.CUT_R - yLength * this.properties.cutRatio
+          bottomR = bottomR >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : bottomR
+
+          if (bottomR < 0) {
+            this.setData({
+              cutR: 0
+            })
+            return
+          }
+
+          if (bottom < 0) {
+            this.setData({
+              cutB: 0
+            })
+            return
+          }
+
+          this.setData({
+            cutR: bottomR,
+            cutB: bottom
+          })
+          break;
+        case 'right':
+          let right = this.conf.CUT_R - xLength
+          right = right >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : right
+
+          let rightT = this.conf.CUT_T - xLength / this.properties.cutRatio
+          rightT = rightT >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : rightT
+
+          if (rightT < 0) {
+            this.setData({
+              cutT: 0
+            })
+            return
+          }
+
+          if (right < 0) {
+            this.setData({
+              cutR: 0
+            })
+            return
+          }
+
+          this.setData({
+            cutR: right,
+            cutT: rightT
           })
           break;
       }
