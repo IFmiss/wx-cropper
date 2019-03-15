@@ -1,9 +1,9 @@
 /* pages/cropper/cropper.wxss */
 Page {
   /* 点的颜色 */
-  --primary-color: #69f;
+  --primary-color: rgb(255, 255, 255);
   /* 边框颜色 */
-  --primary-color-outline: rgba(102, 153, 255, 0.75);
+  --primary-color-outline: rgba(255, 255, 255, 0.75);
   /* 虚线颜色 */
   --primary-color-dashed: rgba(255, 255, 255, 0.46);
   /* 裁剪区域背景色 */

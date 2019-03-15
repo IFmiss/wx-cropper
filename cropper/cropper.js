@@ -349,8 +349,8 @@ Component({
     contentDragStart (e) {
       this.drag.IS_TOUCH_CONTENT = true
 
-      this.drag.TOUCH_OFFSET_X = e.touches[0].pageX - this.data.cutL
-      this.drag.TOUCH_OFFSET_Y = e.touches[0].pageY - this.data.cutT
+      this.drag.TOUCH_OFFSET_X = (e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.data.cutL)
+      this.drag.TOUCH_OFFSET_Y = (e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO - this.data.cutT)
 
       /**
        * 获取可移动的最大值 xy方向
@@ -383,8 +383,8 @@ Component({
      */
     contentDragMove (e) {
       if (!this.drag.IS_TOUCH_CONTENT) return
-      const MOVE_X = e.touches[0].pageX - this.drag.TOUCH_OFFSET_X
-      const MOVE_Y = (e.touches[0].pageY - this.drag.TOUCH_OFFSET_Y)
+      const MOVE_X = e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.drag.TOUCH_OFFSET_X 
+      const MOVE_Y = e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO - this.drag.TOUCH_OFFSET_Y
 
       const drag_x = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_X, Math.max(0, MOVE_X))
       const drag_y = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_Y, Math.max(0, MOVE_Y))
@@ -397,8 +397,8 @@ Component({
       })
 
       // 需要初始化
-      this.drag.TOUCH_OFFSET_X = e.touches[0].pageX - this.data.cutL
-      this.drag.TOUCH_OFFSET_Y = e.touches[0].pageY - this.data.cutT
+      this.drag.TOUCH_OFFSET_X = (e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.data.cutL)
+      this.drag.TOUCH_OFFSET_Y = (e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO - this.data.cutT)
     },
 
     /**
@@ -452,8 +452,8 @@ Component({
      * 等比例的拖拽方式
      */
     sideDragMoveConst (e, type) {
-      const xLength = e.touches[0].pageX - this.drag.MOVE_PAGE_X
-      const yLength = e.touches[0].pageY - this.drag.MOVE_PAGE_Y
+      const xLength = (e.touches[0].pageX - this.drag.MOVE_PAGE_X) * this.conf.DRAG_MOVE_RATIO
+      const yLength = (e.touches[0].pageY - this.drag.MOVE_PAGE_Y) * this.conf.DRAG_MOVE_RATIO
       switch (type) {
         case 'top':
           let top = this.conf.CUT_T + yLength
@@ -566,8 +566,8 @@ Component({
      * 非等比例拖拽的操作
      */
     sideDragMoveDefault (e, type) {
-      const xLength = e.touches[0].pageX - this.drag.MOVE_PAGE_X
-      const yLength = e.touches[0].pageY - this.drag.MOVE_PAGE_Y
+      const xLength = (e.touches[0].pageX - this.drag.MOVE_PAGE_X) * this.conf.DRAG_MOVE_RATIO
+      const yLength = (e.touches[0].pageY - this.drag.MOVE_PAGE_Y) * this.conf.DRAG_MOVE_RATIO
       switch (type) {
         case 'top':
           let top = this.conf.CUT_T + yLength
