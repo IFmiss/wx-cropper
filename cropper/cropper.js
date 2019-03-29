@@ -106,6 +106,7 @@ Component({
         CUT_H: null,  // 初始化拖拽元素的高度
 
         IS_TOUCH_CONTENT: false,  // 是否是可拖动的状态（拖拽裁剪框）
+        IS_TOUCH_SIDE: false,  // 是否可以拖拽边框
 
         // 拖拽区域的时候设置
         TOUCH_OFFSET_X: null, // 手按下相对于裁剪框左边的距离
@@ -390,10 +391,10 @@ Component({
       const drag_y = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_Y, Math.max(0, MOVE_Y))
 
       this.setData({
-        cutL: drag_x,
-        cutR: this.data.cropperW - this.drag.CUT_W - drag_x,
-        cutT: drag_y,
-        cutB: (this.data.cropperH - this.drag.CUT_H - drag_y)
+        cutL: Math.ceil(drag_x),
+        cutR: Math.ceil(this.data.cropperW - this.drag.CUT_W - drag_x),
+        cutT: Math.ceil(drag_y),
+        cutB: Math.ceil((this.data.cropperH - this.drag.CUT_H - drag_y))
       })
 
       // 需要初始化
@@ -412,6 +413,7 @@ Component({
      * 裁剪框4个方向的拖拽
      */
     sideDragStart (e) {
+      this.drag.IS_TOUCH_SIDE = true
       this.drag.MOVE_PAGE_X = e.touches[0].pageX
       this.drag.MOVE_PAGE_Y = e.touches[0].pageY
 
@@ -432,6 +434,7 @@ Component({
      *  拖拽中
      */
     sideDragMove (e) {
+      if (!this.drag.IS_TOUCH_SIDE) return
       const type = e.target.dataset.drag
       if (this.properties.cutRatio === 0) {
         this.sideDragMoveDefault(e, type)
@@ -444,6 +447,7 @@ Component({
      * 拖拽结束
      */
     sideDragEnd () {
+      this.drag.IS_TOUCH_SIDE = false
       console.log('sideDragEnd')
     },
 
@@ -457,19 +461,20 @@ Component({
       switch (type) {
         case 'top':
           let top = this.conf.CUT_T + yLength
-          top = top >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : top
+          top = Math.ceil(top >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : top)
 
           let topL = this.conf.CUT_L + yLength * this.properties.cutRatio
-          topL = topL >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : topL
+          topL = Math.ceil(topL >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : topL)
 
-          if (topL < 0) {
+          if (topL <= 0) {
+            if (this.data.cutT <= 0) return
             this.setData({
               cutL: 0
             })
             return
           }
 
-          if (top < 0) {
+          if (top <= 0) {
             this.setData({
               cutT: 0
             })
@@ -483,19 +488,22 @@ Component({
           break;
         case 'left':
           let left = this.conf.CUT_L + xLength
-          left = left >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : left
+          left = Math.ceil(left >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : left)
 
           let leftB = this.conf.CUT_B + xLength / this.properties.cutRatio
-          leftB = leftB >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : leftB
+          leftB = Math.ceil(leftB >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : leftB)
 
-          if (leftB < 0) {
+          console.log(leftB)
+          console.log(left)
+          if (leftB <= 0) {
+            if (this.data.cutL <= 0) return
             this.setData({
               cutB: 0
             })
             return
           }
 
-          if (left < 0) {
+          if (left <= 0) {
             this.setData({
               cutL: 0
             })
@@ -509,19 +517,20 @@ Component({
           break;
         case 'bottom':
           let bottom = this.conf.CUT_B - yLength
-          bottom = bottom >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : bottom
+          bottom = Math.ceil(bottom >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : bottom)
 
           let bottomR = this.conf.CUT_R - yLength * this.properties.cutRatio
-          bottomR = bottomR >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : bottomR
+          bottomR = Math.ceil(bottomR >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : bottomR)
 
-          if (bottomR < 0) {
+          if (bottomR <= 0) {
+            if (this.data.cutB <= 0) return
             this.setData({
               cutR: 0
             })
             return
           }
 
-          if (bottom < 0) {
+          if (bottom <= 0) {
             this.setData({
               cutB: 0
             })
@@ -535,19 +544,20 @@ Component({
           break;
         case 'right':
           let right = this.conf.CUT_R - xLength
-          right = right >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : right
+          right = Math.ceil(right >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : right)
 
           let rightT = this.conf.CUT_T - xLength / this.properties.cutRatio
-          rightT = rightT >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : rightT
+          rightT = Math.ceil(rightT >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : rightT)
 
-          if (rightT < 0) {
+          if (rightT <= 0) {
+            if (this.data.cutR <= 0) return
             this.setData({
               cutT: 0
             })
             return
           }
 
-          if (right < 0) {
+          if (right <= 0) {
             this.setData({
               cutR: 0
             })
@@ -572,7 +582,7 @@ Component({
         case 'top':
           let top = this.conf.CUT_T + yLength
           top = top <= 0 ? 0 : top
-          top = top >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : top
+          top = Math.ceil(top >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : top)
           this.setData({
             cutT: top
           })
@@ -580,7 +590,7 @@ Component({
         case 'bottom':
           let bottom = this.conf.CUT_B - yLength
           bottom = bottom <= 0 ? 0 : bottom
-          bottom = bottom >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : bottom
+          bottom = Math.ceil(bottom >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : bottom)
           this.setData({
             cutB: bottom
           })
@@ -588,7 +598,7 @@ Component({
         case 'right':
           let right = this.conf.CUT_R - xLength
           right = right <= 0 ? 0 : right
-          right = right >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : right
+          right = Math.ceil(right >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : right)
           this.setData({
             cutR: right
           })
@@ -596,7 +606,7 @@ Component({
         case 'left':
           let left = this.conf.CUT_L + xLength
           left = left <= 0 ? 0 : left
-          left = left >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : left
+          left = Math.ceil(left >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : left)
           this.setData({
             cutL: left
           })
@@ -604,11 +614,11 @@ Component({
         case 'rightBottom':
           let rightBottomR = this.conf.CUT_R - xLength
           rightBottomR = rightBottomR <= 0 ? 0 : rightBottomR
-          rightBottomR = rightBottomR >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : rightBottomR
+          rightBottomR = Math.ceil(rightBottomR >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : rightBottomR)
 
           let rightBottomB = this.conf.CUT_B - yLength
           rightBottomB = rightBottomB <= 0 ? 0 : rightBottomB
-          rightBottomB = rightBottomB >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : rightBottomB
+          rightBottomB = Math.ceil(rightBottomB >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : rightBottomB)
           this.setData({
             cutB: rightBottomB,
             cutR: rightBottomR
