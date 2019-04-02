@@ -227,7 +227,8 @@ Component({
 
               // 图片缩放值
               scaleP,
-              qualityWidth
+              qualityWidth,
+              innerAspectRadio: _this.conf.IMG_RATIO
             })
           } else {
             // 竖屏初始化
@@ -243,7 +244,8 @@ Component({
 
               // 图片缩放值
               scaleP,
-              qualityWidth
+              qualityWidth,
+              innerAspectRadio: _this.conf.IMG_RATIO
             })
           }
 
@@ -256,6 +258,54 @@ Component({
 
           wx.hideLoading()
         } 
+      })
+    },
+
+    /**
+     * 点击完成裁剪图片并返回图片信息
+     * width 宽度
+     * height  高度
+     * url  图片的临时存储地址
+     */
+    getImageInfo() {
+      var _this = this
+      wx.showLoading({
+        title: '图片生成中...',
+      })
+      // 将图片写入画布
+      const ctx = wx.createCanvasContext('wxCropperCanvas')
+      let w = this.data.qualityWidth
+      let h = this.data.qualityWidth / this.conf.IMG_RATIO
+      console.log(_this.properties.imageSrc)
+      ctx.drawImage(_this.properties.imageSrc, 0, 0, w, h)
+      console.log(w, h)
+      ctx.draw(true, () => {
+        console.log(111111)
+        // 获取画布要裁剪的位置和宽度   均为百分比 * 画布中图片的宽度    保证了在微信小程序中裁剪的图片模糊  位置不对的问题
+        var canvasW = ((_this.data.cropperW - _this.data.cutL - _this.data.cutR) / _this.data.cropperW) * w
+        var canvasH = ((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH) * h
+        var canvasL = (_this.data.cutL / _this.data.cropperW) * w
+        var canvasT = (_this.data.cutT / _this.data.cropperH) * h
+        console.log(canvasW, canvasH, canvasL, canvasT)
+        // 生成图片
+        wx.canvasToTempFilePath({
+          x: canvasL,
+          y: canvasT,
+          width: canvasW,
+          height: canvasH,
+          destWidth: canvasW,
+          destHeight: canvasH,
+          quality: 0.5,
+          canvasId: 'wxCropperCanvas',
+          success: function (res) {
+            wx.hideLoading()
+            // 成功获得地址的地方
+            wx.previewImage({
+              current: '', // 当前显示图片的http链接
+              urls: [res.tempFilePath] // 需要预览的图片http链接列表
+            })
+          }
+        })
       })
     },
 
