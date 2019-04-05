@@ -516,8 +516,9 @@ Component({
           let topL = this.conf.CUT_L + yLength * this.properties.cutRatio
           topL = Math.ceil(topL >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : topL)
 
-          if (topL <= 0) {
+          if (topL < 0) {
             if (this.data.cutT <= 0) return
+            if (this.data.cutL >= 0) return
             this.setData({
               cutL: 0
             })
@@ -545,8 +546,9 @@ Component({
 
           console.log(leftB)
           console.log(left)
-          if (leftB <= 0) {
+          if (leftB < 0) {
             if (this.data.cutL <= 0) return
+            if (this.data.cutB >= 0) return
             this.setData({
               cutB: 0
             })
@@ -572,8 +574,9 @@ Component({
           let bottomR = this.conf.CUT_R - yLength * this.properties.cutRatio
           bottomR = Math.ceil(bottomR >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : bottomR)
 
-          if (bottomR <= 0) {
+          if (bottomR < 0) {
             if (this.data.cutB <= 0) return
+            if (this.data.cutR >= 0) return
             this.setData({
               cutR: 0
             })
@@ -599,8 +602,9 @@ Component({
           let rightT = this.conf.CUT_T - xLength / this.properties.cutRatio
           rightT = Math.ceil(rightT >= this.drag.SPACE_TOP_POSITION ? this.drag.SPACE_TOP_POSITION : rightT)
 
-          if (rightT <= 0) {
+          if (rightT < 0) {
             if (this.data.cutR <= 0) return
+            if (this.data.cutT >= 0) return
             this.setData({
               cutT: 0
             })
