@@ -401,7 +401,7 @@ Component({
       this.drag.IS_TOUCH_CONTENT = true
 
       this.drag.TOUCH_OFFSET_X = (e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.data.cutL)
-      this.drag.TOUCH_OFFSET_Y = (e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO - this.data.cutT)
+      this.drag.TOUCH_OFFSET_Y = (e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO * this.conf.DRAG_MOVE_RATIO - this.data.cutT)
 
       /**
        * 获取可移动的最大值 xy方向
@@ -435,7 +435,7 @@ Component({
     contentDragMove (e) {
       if (!this.drag.IS_TOUCH_CONTENT) return
       const MOVE_X = e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.drag.TOUCH_OFFSET_X 
-      const MOVE_Y = e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO - this.drag.TOUCH_OFFSET_Y
+      const MOVE_Y = e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO * this.conf.DRAG_MOVE_RATIO - this.drag.TOUCH_OFFSET_Y
 
       const drag_x = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_X, Math.max(0, MOVE_X))
       const drag_y = Math.min(this.drag.TOUCH_MAX_MOVE_SECTION_Y, Math.max(0, MOVE_Y))
@@ -449,7 +449,7 @@ Component({
 
       // 需要初始化
       this.drag.TOUCH_OFFSET_X = (e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.data.cutL)
-      this.drag.TOUCH_OFFSET_Y = (e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO - this.data.cutT)
+      this.drag.TOUCH_OFFSET_Y = (e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO * this.conf.DRAG_MOVE_RATIO - this.data.cutT)
     },
 
     /**

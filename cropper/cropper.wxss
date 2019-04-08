@@ -29,6 +29,7 @@ Page {
   align-items: center;
   justify-content: center;
   flex: 1 1 auto;
+  overflow: hidden;
 }
 .wx-content-info .cropper-content .wx-corpper {
   position: relative;
@@ -69,6 +70,7 @@ Page {
   position: absolute;
   background: var(--box-bg);
   z-index: 2;
+  outline: 2500rpx solid rgba(0, 0, 0, 0.7);
 }
 
 .wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-crop-box .wx-cropper-view-box {
