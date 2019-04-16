@@ -107,6 +107,7 @@ Component({
 
         IS_TOUCH_CONTENT: false,  // 是否是可拖动的状态（拖拽裁剪框）
         IS_TOUCH_SIDE: false,  // 是否可以拖拽边框
+        IS_NO_DRAG: false, 
 
         // 拖拽区域的时候设置
         TOUCH_OFFSET_X: null, // 手按下相对于裁剪框左边的距离
@@ -199,10 +200,10 @@ Component({
            */
           _this.conf.DRAW_IMAGE_W = _this.conf.IMG_REAL_W = res.width
           _this.conf.IMG_REAL_H = res.height
-          _this.conf.IMG_RATIO = _this.conf.IMG_REAL_W / _this.conf.IMG_REAL_H
-          _this.conf.CROPPER_HEIGHT = _this.properties.cropperWidth / _this.conf.IMG_RATIO
+          _this.conf.IMG_RATIO = Number((_this.conf.IMG_REAL_W / _this.conf.IMG_REAL_H).toFixed(5))
+          _this.conf.CROPPER_HEIGHT = Math.ceil(_this.properties.cropperWidth / _this.conf.IMG_RATIO)
 
-          const scaleP = _this.conf.IMG_REAL_W / _this.properties.cropperWidth
+          const scaleP = Number((_this.conf.IMG_REAL_W / _this.properties.cropperWidth).toFixed(5))
           const qualityWidth = _this.conf.DRAW_IMAGE_W > _this.conf.MAX_QW ? _this.conf.MAX_QW : _this.conf.DRAW_IMAGE_W
           // const MIN_RANG
           const p = _this.initPosition()
@@ -272,20 +273,23 @@ Component({
       wx.showLoading({
         title: '图片生成中...',
       })
+      this.drag.IS_NO_DRAG = true
       // 将图片写入画布
-      const ctx = wx.createCanvasContext('wxCropperCanvas')
+      const ctx = wx.createCanvasContext('wxCropperCanvas', _this)
       let w = this.data.qualityWidth
-      let h = this.data.qualityWidth / this.conf.IMG_RATIO
+      let h = Math.ceil(this.data.qualityWidth / this.data.innerAspectRadio)
       console.log(_this.properties.imageSrc)
+      console.log(ctx)
       ctx.drawImage(_this.properties.imageSrc, 0, 0, w, h)
       console.log(w, h)
-      ctx.draw(true, () => {
+      console.log(ctx.draw)
+      ctx.draw(false, () => {
         console.log(111111)
         // 获取画布要裁剪的位置和宽度   均为百分比 * 画布中图片的宽度    保证了在微信小程序中裁剪的图片模糊  位置不对的问题
-        var canvasW = ((_this.data.cropperW - _this.data.cutL - _this.data.cutR) / _this.data.cropperW) * w
-        var canvasH = ((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH) * h
-        var canvasL = (_this.data.cutL / _this.data.cropperW) * w
-        var canvasT = (_this.data.cutT / _this.data.cropperH) * h
+        var canvasW = Math.ceil(((_this.data.cropperW - _this.data.cutL - _this.data.cutR) / _this.data.cropperW) * w)
+        var canvasH = Math.ceil(((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH) * h)
+        var canvasL = Math.ceil((_this.data.cutL / _this.data.cropperW) * w)
+        var canvasT = Math.ceil((_this.data.cutT / _this.data.cropperH) * h)
         console.log(canvasW, canvasH, canvasL, canvasT)
         // 生成图片
         wx.canvasToTempFilePath({
@@ -298,14 +302,18 @@ Component({
           quality: 0.5,
           canvasId: 'wxCropperCanvas',
           success: function (res) {
-            wx.hideLoading()
-            // 成功获得地址的地方
             wx.previewImage({
               current: '', // 当前显示图片的http链接
               urls: [res.tempFilePath] // 需要预览的图片http链接列表
             })
+          },
+          complete: function () {
+            // 结束之后可拖拽放大缩小
+            // 关闭loading
+            wx.hideLoading()
+            _this.drag.IS_NO_DRAG = false
           }
-        })
+        }, _this)
       })
     },
 
@@ -398,6 +406,7 @@ Component({
      * 裁剪框的拖动事件
      */
     contentDragStart (e) {
+      if (this.drag.IS_NO_DRAG) return
       this.drag.IS_TOUCH_CONTENT = true
 
       this.drag.TOUCH_OFFSET_X = (e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.data.cutL)
@@ -433,6 +442,7 @@ Component({
      * 裁剪框拖动
      */
     contentDragMove (e) {
+      if (this.drag.IS_NO_DRAG) return
       if (!this.drag.IS_TOUCH_CONTENT) return
       const MOVE_X = e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.drag.TOUCH_OFFSET_X 
       const MOVE_Y = e.touches[0].pageY * this.conf.DRAG_MOVE_RATIO * this.conf.DRAG_MOVE_RATIO - this.drag.TOUCH_OFFSET_Y
@@ -463,6 +473,7 @@ Component({
      * 裁剪框4个方向的拖拽
      */
     sideDragStart (e) {
+      if (this.drag.IS_NO_DRAG) return
       this.drag.IS_TOUCH_SIDE = true
       this.drag.MOVE_PAGE_X = e.touches[0].pageX
       this.drag.MOVE_PAGE_Y = e.touches[0].pageY
@@ -484,6 +495,7 @@ Component({
      *  拖拽中
      */
     sideDragMove (e) {
+      if (this.drag.IS_NO_DRAG) return
       if (!this.drag.IS_TOUCH_SIDE) return
       const type = e.target.dataset.drag
       if (this.properties.cutRatio === 0) {

@@ -8,6 +8,8 @@ Page {
   --primary-color-dashed: rgba(255, 255, 255, 0.46);
   /* 裁剪区域背景色 */
   --box-bg: transparent;
+  /* 裁剪所有的背景色 */
+  --cropper-bg: #000;
 }
 .wx-content-info {
   position: fixed;
@@ -15,10 +17,7 @@ Page {
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  background: #000;
+  background: var(--cropper-bg);
 }
 .wx-content-info .cropper-content {
   min-height: calc(20%);
@@ -28,8 +27,12 @@ Page {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1 1 auto;
-  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  bottom: 88rpx;
 }
 .wx-content-info .cropper-content .wx-corpper {
   position: relative;
@@ -336,12 +339,12 @@ Page {
   cursor: n-resize;
 }
 .wx-content-info .cropper-config {
-  /* position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 80rpx; */
-  flex: 0 0 80rpx;
+  height: 80rpx;
+  z-index: 3;
   width: 100%;
   display: flex;
   align-items: center;
