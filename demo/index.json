@@ -1,5 +1,5 @@
 {
   "usingComponents": {
-    "my-cropper": "./../lib/index"
+    "my-cropper": "@dw/wx-cropper"
   }
 }

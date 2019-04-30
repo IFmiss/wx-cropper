@@ -89,7 +89,7 @@ Component({
    * 组件的方法列表
    */
   methods: {
-    close () {
+    close() {
       wx.hideLoading()
       this.triggerEvent('close')
     },
@@ -97,7 +97,7 @@ Component({
     /**
      * 初始化变量信息
      */
-    initStaticData () {
+    initStaticData() {
       this.drag = {
         CUT_L: null,  // 初始化拖拽元素的left值
         CUT_T: null,  // ...top值
@@ -170,7 +170,7 @@ Component({
      * 选择本地图片
      * 基于底部中间的按钮的点击事件
      */
-    getImage: function () {
+    getImage() {
       const _this = this
       wx.chooseImage({
         success: function (res) {
@@ -178,7 +178,7 @@ Component({
             isShowImg: false,
             filePath: res.tempFilePaths[0],
           })
-          _this.loadImage(_this.data.filePath);
+          _this.loadImage(_this.data.filePath)
         },
       })
     },
@@ -186,13 +186,13 @@ Component({
     /**
      * 初始化加载图片
      */
-    loadImage (src) {
+    loadImage(src) {
       const _this = this
 
       wx.showLoading({
         title: '图片加载中...',
       })
-      console.log(this.properties.imageSrc)
+      // console.log(this.properties.imageSrc)
       wx.getImageInfo({
         src: src ? src : this.properties.imageSrc,
         success: function (res) {
@@ -211,11 +211,11 @@ Component({
           const p = _this.initPosition()
 
           // 根据图片的宽高显示不同的效果 保证图片可以正常显示 (横屏)
-          console.log(_this.conf.IMG_RATIO)
-          console.log(_this.conf)
-          console.log(_this.drag)
-          console.log(_this.data)
-          console.log(p)
+          // console.log(_this.conf.IMG_RATIO)
+          // console.log(_this.conf)
+          // console.log(_this.drag)
+          // console.log(_this.data)
+          // console.log(p)
           if (_this.conf.IMG_RATIO >= 1) {
             _this.conf.CROPPER_WIDTH = _this.properties.cropperWidth
             _this.setData ({
@@ -289,7 +289,7 @@ Component({
         const canvasH = Math.ceil(((_this.data.cropperH - _this.data.cutT - _this.data.cutB) / _this.data.cropperH) * h)
         const canvasL = Math.ceil((_this.data.cutL / _this.data.cropperW) * w)
         const canvasT = Math.ceil((_this.data.cutT / _this.data.cropperH) * h)
-        console.log(canvasW, canvasH, canvasL, canvasT)
+        // console.log(canvasW, canvasH, canvasL, canvasT)
         // 生成图片
         wx.canvasToTempFilePath({
           x: canvasL,
@@ -322,15 +322,15 @@ Component({
     /**
      * 设置最小裁剪宽度高度限制
      */
-    setMinCutInfo () {
+    setMinCutInfo() {
       this.conf.CUT_MIN_W = this.properties.minCropperW
       if (this.properties.cutRatio) {
         this.conf.CUT_MIN_H = this.conf.CUT_MIN_W / this.properties.cutRatio
-        console.log('this.conf.CUT_MIN_H', this.conf.CUT_MIN_H)
+        // console.log('this.conf.CUT_MIN_H', this.conf.CUT_MIN_H)
         return
       }
       this.conf.CUT_MIN_H = this.conf.CUT_MIN_W
-      console.log('this.conf.CUT_MIN_H', this.conf.CUT_MIN_H)
+      // console.log('this.conf.CUT_MIN_H', this.conf.CUT_MIN_H)
     },
 
     /**
@@ -338,12 +338,12 @@ Component({
      * 需要 cutRatio 来判断
      * @return 返回裁剪的left, right, top bottom的值
      */
-    initPosition () {
+    initPosition() {
       // 定义返回的对象
-      let left = 0,
-          right = 0,
-          top = 0,
-          bottom = 0
+      const left = 0,
+        right = 0,
+        top = 0,
+        bottom = 0
       // cutRatio为0 且为横行  则为不等比裁剪
       if (this.properties.cutRatio === 0 && this.conf.IMG_RATIO >= 1) {
         return { left, right, top, bottom }
@@ -387,7 +387,7 @@ Component({
       // 否则
 
       if (this.conf.IMG_RATIO >= this.properties.cutRatio) {
-        let leftRight = Math.ceil((this.conf.CROPPER_WIDTH - (this.conf.CROPPER_HEIGHT * this.properties.cutRatio)) / 2)
+        const leftRight = Math.ceil((this.conf.CROPPER_WIDTH - (this.conf.CROPPER_HEIGHT * this.properties.cutRatio)) / 2)
         return {
           left: leftRight,
           right: leftRight,
@@ -407,7 +407,7 @@ Component({
     /**
      * 裁剪框的拖动事件
      */
-    contentDragStart (e) {
+    contentDragStart(e) {
       if (this.drag.IS_NO_DRAG) return
       this.drag.IS_TOUCH_CONTENT = true
 
@@ -425,7 +425,7 @@ Component({
     /**
      * 获取裁剪区域信息
      */
-    cropperCurrentInfo () {
+    cropperCurrentInfo() {
       const x = this.data.cutL + this.data.cutR
       const y = this.data.cutT + this.data.cutB
 
@@ -443,7 +443,7 @@ Component({
     /**
      * 裁剪框拖动
      */
-    contentDragMove (e) {
+    contentDragMove(e) {
       if (this.drag.IS_NO_DRAG) return
       if (!this.drag.IS_TOUCH_CONTENT) return
       const MOVE_X = e.touches[0].pageX * this.conf.DRAG_MOVE_RATIO - this.drag.TOUCH_OFFSET_X
@@ -467,14 +467,14 @@ Component({
     /**
      * 裁剪框拖动结束
      */
-    contentTouchEnd () {
+    contentTouchEnd() {
       this.drag.IS_TOUCH_CONTENT = false
     },
 
     /**
      * 裁剪框4个方向的拖拽
      */
-    sideDragStart (e) {
+    sideDragStart(e) {
       if (this.drag.IS_NO_DRAG) return
       this.drag.IS_TOUCH_SIDE = true
       this.drag.MOVE_PAGE_X = e.touches[0].pageX
@@ -496,7 +496,7 @@ Component({
     /**
      *  拖拽中
      */
-    sideDragMove (e) {
+    sideDragMove(e) {
       if (this.drag.IS_NO_DRAG) return
       if (!this.drag.IS_TOUCH_SIDE) return
       const type = e.target.dataset.drag
@@ -510,16 +510,16 @@ Component({
     /**
      * 拖拽结束
      */
-    sideDragEnd () {
+    sideDragEnd() {
       this.drag.IS_TOUCH_SIDE = false
-      console.log('sideDragEnd')
+      // console.log('sideDragEnd')
     },
 
     /**
      * 开始拖拽
      * 等比例的拖拽方式
      */
-    sideDragMoveConst (e, type) {
+    sideDragMoveConst(e, type) {
       const xLength = (e.touches[0].pageX - this.drag.MOVE_PAGE_X) * this.conf.DRAG_MOVE_RATIO
       const yLength = (e.touches[0].pageY - this.drag.MOVE_PAGE_Y) * this.conf.DRAG_MOVE_RATIO
       switch (type) {
@@ -550,7 +550,7 @@ Component({
             cutT: top,
             cutL: topL
           })
-          break;
+          break
         case 'left':
           let left = this.conf.CUT_L + xLength
           left = Math.ceil(left >= this.drag.SPACE_LEFT_POSITION ? this.drag.SPACE_LEFT_POSITION : left)
@@ -558,8 +558,8 @@ Component({
           let leftB = this.conf.CUT_B + xLength / this.properties.cutRatio
           leftB = Math.ceil(leftB >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : leftB)
 
-          console.log(leftB)
-          console.log(left)
+          // console.log(leftB)
+          // console.log(left)
           if (leftB < 0) {
             if (this.data.cutL <= 0) return
             if (this.data.cutB >= 0) return
@@ -580,7 +580,7 @@ Component({
             cutL: left,
             cutB: leftB
           })
-          break;
+          break
         case 'bottom':
           let bottom = this.conf.CUT_B - yLength
           bottom = Math.ceil(bottom >= this.drag.SPACE_BOTTOM_POSITION ? this.drag.SPACE_BOTTOM_POSITION : bottom)
@@ -608,7 +608,7 @@ Component({
             cutR: bottomR,
             cutB: bottom
           })
-          break;
+          break
         case 'right':
           let right = this.conf.CUT_R - xLength
           right = Math.ceil(right >= this.drag.SPACE_RIGHT_POSITION ? this.drag.SPACE_RIGHT_POSITION : right)
@@ -636,14 +636,14 @@ Component({
             cutR: right,
             cutT: rightT
           })
-          break;
+          break
       }
     },
 
     /**
      * 非等比例拖拽的操作
      */
-    sideDragMoveDefault (e, type) {
+    sideDragMoveDefault(e, type) {
       const xLength = (e.touches[0].pageX - this.drag.MOVE_PAGE_X) * this.conf.DRAG_MOVE_RATIO
       const yLength = (e.touches[0].pageY - this.drag.MOVE_PAGE_Y) * this.conf.DRAG_MOVE_RATIO
       switch (type) {
@@ -654,7 +654,7 @@ Component({
           this.setData({
             cutT: top
           })
-          break;
+          break
         case 'bottom':
           let bottom = this.conf.CUT_B - yLength
           bottom = bottom <= 0 ? 0 : bottom
@@ -662,7 +662,7 @@ Component({
           this.setData({
             cutB: bottom
           })
-          break;
+          break
         case 'right':
           let right = this.conf.CUT_R - xLength
           right = right <= 0 ? 0 : right
@@ -670,7 +670,7 @@ Component({
           this.setData({
             cutR: right
           })
-          break;
+          break
         case 'left':
           let left = this.conf.CUT_L + xLength
           left = left <= 0 ? 0 : left
@@ -678,7 +678,7 @@ Component({
           this.setData({
             cutL: left
           })
-          break;
+          break
         case 'rightBottom':
           let rightBottomR = this.conf.CUT_R - xLength
           rightBottomR = rightBottomR <= 0 ? 0 : rightBottomR
@@ -691,9 +691,9 @@ Component({
             cutB: rightBottomB,
             cutR: rightBottomR
           })
-          break;
+          break
         default:
-          break;
+          break
       }
     },
   },
@@ -702,24 +702,24 @@ Component({
     this.initStaticData()
     // console.log(this.drag)
     // console.log(this.conf)
-    console.log(this.data)
-    console.log(this.conf.DRAG_MOVE_RATIO)
+    // console.log(this.data)
+    // console.log(this.conf.DRAG_MOVE_RATIO)
   },
 
   attached: function () {
-    console.log('attached')
+    // console.log('attached')
     this.loadImage()
   },
 
   ready: function () {
-    console.log('ready')
+    // console.log('ready')
   },
 
   moved: function () {
-    console.log('moved')
+    // console.log('moved')
   },
 
   detached: function () {
-    console.log('detached')
+    // console.log('detached')
   }
 })

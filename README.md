@@ -15,7 +15,7 @@ npm i @dw/wx-cropper
 ```json
 {
   "usingComponents": {
-    // "my-cropper": "./../wx-cropper/index"
+    "my-cropper": "@dw/wx-cropper"
   }
 }
 ```
