@@ -1,7 +1,7 @@
 {
   "name": "@dw/wx-cropper",
-  "version": "1.0.5",
-  "description": "",
+  "version": "1.0.6",
+  "description": "wx-cropper",
   "main": "miniprogram_dist/index.js",
   "scripts": {
     "dev": "gulp dev --develop",
