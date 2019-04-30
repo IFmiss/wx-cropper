@@ -80,11 +80,14 @@ hideCut () {
 #### `minCropperW`    裁剪区域最小宽度， 如果是等比例 按照最短的计算
 
 #### 裁剪区域固定宽高
-![](https://github.com/IFmiss/wx-cropper/blob/v2/2.jpg)
+![](https://github.com/IFmiss/wx-cropper//blob/master/1.jpg)
 
+![](https://github.com/IFmiss/wx-cropper//blob/master/2.jpg)
 ```js
 ```
 
-#### 裁剪之后的效果
+#### 不固定比例
 
-![](https://github.com/IFmiss/wx-cropper/blob/v2/1.jpg) 
+![](https://github.com/IFmiss/wx-cropper//blob/master/4.jpg)
+
+![](https://github.com/IFmiss/wx-cropper//blob/master/3.jpg)
