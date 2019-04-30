@@ -1,13 +1,15 @@
-/* pages/wx-cropper/index.wxss */
+/* pages/cropper/cropper.wxss */
 Page {
   /* 点的颜色 */
-  --primary-color: #69f;
+  --primary-color: rgb(255, 255, 255);
   /* 边框颜色 */
-  --primary-color-outline: rgba(102, 153, 255, 0.75);
+  --primary-color-outline: rgba(255, 255, 255, 0.75);
   /* 虚线颜色 */
   --primary-color-dashed: rgba(255, 255, 255, 0.46);
   /* 裁剪区域背景色 */
-  --box-bg: rgba(255, 255, 255, 0.3);
+  --box-bg: transparent;
+  /* 裁剪所有的背景色 */
+  --cropper-bg: #000;
 }
 .wx-content-info {
   position: fixed;
@@ -15,10 +17,7 @@ Page {
   left: 0;
   right: 0;
   bottom: 0;
-  display: block;
-  align-items: center;
-  flex-direction: column;
-  background: #000;
+  background: var(--cropper-bg);
 }
 .wx-content-info .cropper-content {
   min-height: calc(20%);
@@ -27,9 +26,15 @@ Page {
   margin-top: 8rpx;
   display: flex;
   align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  bottom: 88rpx;
 }
 .wx-content-info .cropper-content .wx-corpper {
-  width: 100%;
   position: relative;
   overflow: visible;
   -webkit-user-select: none;
@@ -44,7 +49,7 @@ Page {
   position: relative;
   /* 内部的信息 */
 }
-.wx-content-info .cropper-content .wx-corpper .wx-corpper-content image {
+.wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-content-bg {
   display: block;
   width: 100%;
   min-width: 0 !important;
@@ -54,12 +59,27 @@ Page {
   max-height: none !important;
   image-orientation: 0deg !important;
   margin: 0 auto;
+  position: relative;
+}
+.wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-content-bg .mask{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
 }
 .wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-crop-box {
   position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: var(--box-bg);
   z-index: 2;
+  outline: 2500rpx solid rgba(0, 0, 0, 0.7);
 }
+
 .wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-crop-box .wx-cropper-view-box {
   position: relative;
   display: block;
@@ -75,6 +95,13 @@ Page {
   /* 左下 */
   /* 左上 */
 }
+
+.wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-cropper-view-box-img {
+  position: absolute;
+  overflow: hidden;
+}
+
+
 .wx-content-info .cropper-content .wx-corpper .wx-corpper-content .wx-corpper-crop-box .wx-cropper-view-box .wx-cropper-dashed-h {
   position: absolute;
   top: 33.33333333%;
@@ -316,11 +343,13 @@ Page {
   cursor: n-resize;
 }
 .wx-content-info .cropper-config {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 80rpx;
+  z-index: 3;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -331,6 +360,7 @@ Page {
   color: #fff;
   font-size: 26rpx;
   padding: 15rpx 25px;
+  display: block;
 }
 /* 裁剪框预览内容 */
 .wx-cropper-viewer {

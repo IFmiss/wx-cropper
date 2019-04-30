@@ -1,35 +1,88 @@
-### 更新日志
-- 编写2.0版本，添加裁剪区域宽度高度比例的控制，而不是以往的750 * 750 而导致页面显示的内容不充分的视觉效果（通过 CROPPER_RATIO 来控制cropper的宽高比例  默认是0.6666 接近于宽640 / 高960）
-- 添加固定比例裁剪功能 CROPPER_AREA_RATIO 在设置为 > 0 的number值的时候可以控制裁剪的比例，比例也是宽高的比，如果是正方形则为1，如果不想有比例的裁剪，这个常量设置为0 即可
-- 优化界面UI
-- 这些代码还有部分问题，暂时没有放到master，有需要或者了解的可在v2分支拉取代码
+## wx-cropper
+基于原生的微信小程序的裁剪组件
 
-# wx-cropper
-微信小程序  图片裁剪工具，简单易用
-
-### 项目需求
-在做微信小程序的时候有个图片上传之前裁剪的需求，找过一些github中的项目，都不太理想，主要是没有办法自定义宽高，于是自己研究了一下，做了一个简单的图片裁剪效果
-
-### 使用方法
-项目里面直接放的该功能的文件，将这个文件夹复制到小程序项目中，在app.json中启动该页面即可看到效果
-
-
-### 注意：这里面的图片在你们的项目中可能会无法使用，在测试的话 可以用自己本地或者你们项目服务器下的图片地址
-
-### 显示效果
-#### 裁剪区域不固定宽高
-![](https://github.com/IFmiss/wx-cropper/blob/v2/3.jpg) 
-
-这是在裁剪区域设定不设置固定裁剪框的宽高比例，加载的时候会覆盖整张图片
-
-```js
-CROPPER_AREA_RATIO = 0
+### 引入
+支持npm包管理的模式项目目录下执行
+```code
+npm i @dw/wx-cropper
 ```
+
+也可以直接使用项目中的wx-cropper文件夹的文件，放到自己的项目中去
+
+### 使用
+
+在使用的页面的.json文件中注册
+```json
+{
+  "usingComponents": {
+    "my-cropper": "./../wx-cropper/index"
+  }
+}
+```
+
+注册之后在使用的wxml的文件中引入该组件
+```code
+<my-cropper
+  bind:close="hideCut"
+  cutRatio="{{cutRatio}}"
+  wx:if="{{showCropper}}"
+  imageSrc="{{imageSrc}}"
+  cropperRatio={{cropperRatio}}
+  cropperWidth={{cropperWidth}}
+  minCropperW={{minCropperW}}/>
+```
+
+### 参数配置
+#### `close`: 事件  参数为img, 在点击关闭的时候没有这个参数，只有在生成图片的时候才有
+```ts
+  path: string;
+  width: number;
+  height: number;
+```
+```code
+hideCut () {
+  this.setData({
+    showCropper: false
+  })
+  const img = arguments[0].detail
+  if (img && img.path) {
+    console.log(img)
+    this.setData({
+      imageInfo: img
+    })
+  }
+}
+```
+#### `cutRatio`   初始化的裁剪比例
+```js
+/**
+ * @type         number
+ * @description  初始化的裁剪比例
+ * @example 0    默认初始化的裁剪区域宽高为图片的宽高，且裁剪比例不固定
+ * @example 0.5  宽高比例固定，且宽和高的比例为 1 : 2 的比例
+ * @example 2    宽高比例固定，且宽和高的比例为 2 : 1 的比例
+ */
+```
+
+#### `cropperRatio`   组件裁剪显示区域的最大比例
+```js
+/**
+ * @type         number
+ * @description  组件裁剪显示区域的最大比例，如果裁剪的图片过长，则做限制，默认最大宽高比例为 宽640 / 高960 (宽高比例)
+ * @example 1    如果CROPPER_WIDTH宽度是720px，那么裁剪区域的高度也就是 CROPPER_WIDTH / cropperRatio 为 720px;
+ */
+```
+
+#### `imageSrc`   需要裁剪的图片地址 支持本地和线上
+
+#### `cropperWidth`   裁剪区域的宽度 默认720  居中显示
+
+#### `minCropperW`    裁剪区域最小宽度， 如果是等比例 按照最短的计算
+
 #### 裁剪区域固定宽高
 ![](https://github.com/IFmiss/wx-cropper/blob/v2/2.jpg)
 
 ```js
-CROPPER_AREA_RATIO = 1
 ```
 
 #### 裁剪之后的效果

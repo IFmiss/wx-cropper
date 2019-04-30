@@ -1,0 +1,26 @@
+{
+  "name": "@dw/wx-cropper",
+  "version": "1.0.3",
+  "description": "wx-cropper",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "npm publish --access=public"
+  },
+  "files": [
+    "lib/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IFmiss/wx-cropper.git"
+  },
+  "author": "ifmiss",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IFmiss/wx-cropper/issues"
+  },
+  "homepage": "https://github.com/IFmiss/wx-cropper#readme",
+  "dependencies": {
+    "@dw/wx-cropper": "^1.0.3"
+  }
+}

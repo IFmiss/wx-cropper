@@ -5,9 +5,10 @@
       <view class="wx-corpper-content" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx;">
         <view class="wx-corpper-content-bg">
           <!-- <view class="mask" hover-class="none" hover-stop-propagation="false"></view> -->
-          <image src="{{imageSrc}}" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx"></image>
+          <image src="{{filePath}}" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx"></image>
         </view>
         <view class="wx-corpper-crop-box" bind:touchstart="contentDragStart" bind:touchmove="contentDragMove" bind:touchend="contentTouchEnd" style="left:{{cutL}}rpx;top:{{cutT}}rpx;right:{{cutR}}rpx;bottom:{{cutB}}rpx">
+        <!-- <view class="wx-corpper-crop-box" bind:touchstart="contentDragStart" bind:touchmove="contentDragMove" bind:touchend="contentTouchEnd" style="width:{{cropperW - cutL - cutR}}rpx;height:{{cropperH - cutT- cutB}}rpx; transform: translateX({{cutL}}rpx) translateY({{cutT}}rpx);"> -->
           <view class="wx-cropper-view-box">
             <!-- <view class="wx-cropper-view-box-img" style="width:100%;height:100%" hover-class="none" hover-stop-propagation="false">
               <image src="{{imageSrc}}" style="width:{{cropperW}}rpx;height:{{cropperH}}rpx; transform: translateX({{-cutL}}rpx) translateY({{-cutT}}rpx);"></image>
@@ -37,5 +38,5 @@
     <text class="cropper-save" bindtap="getImageInfo">完成</text>
   </view>
   <canvas canvas-id="wxCropperCanvas"
-          style="position:absolute; width:{{ qualityWidth }}px;height:{{ qualityWidth / innerAspectRadio }}px;top:-9999px;left:-9999px;"></canvas>
+          style="position:absolute; width:{{qualityWidth}}px;height:{{qualityWidth / innerAspectRadio }}px;top:-9999px;left:-9999px;"></canvas>
 </view>

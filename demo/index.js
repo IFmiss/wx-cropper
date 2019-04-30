@@ -1,16 +1,12 @@
-/**
- * wx-cropper 2.0
- * 基于微信小程序的图片裁剪工具
- * @author ifmiss
- */
-
 Page({
   /**
    * 页面的初始数据
    */
   data: {
     // 是否使用showCropper
-    showCropper: false
+    showCropper: false,
+
+    cutRatio: 0
   },
 
   /**
@@ -29,7 +25,15 @@ Page({
 
   showCut () {
     this.setData({
-      showCropper: true
+      showCropper: true,
+      cutRatio: 1
+    })
+  },
+
+  showCutDefault () {
+    this.setData({
+      showCropper: true,
+      cutRatio: 0
     })
   },
 
@@ -37,6 +41,13 @@ Page({
     this.setData({
       showCropper: false
     })
+    const img = arguments[0].detail
+    if (img && img.path) {
+      console.log(img)
+      this.setData({
+        imageInfo: img
+      })
+    }
   },
 
   /**

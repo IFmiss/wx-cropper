@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "my-cropper": "/miniprogram_npm/@dw/wx-cropper"
+  }
+}
